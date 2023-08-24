@@ -24,5 +24,9 @@ class Rule(models.Model):
     # TODO make status a foreign key or ENUM?
     status = models.CharField(max_length=20)
 
-    # TODO user-object?
-    requester = models.CharField(max_length=50)
+    requester = models.CharField(max_length=70)
+    creator = models.CharField(max_length=70)
+
+    created_on = models.DateField()
+    ticket = models.CharField(max_length=20)
+    firewalls = models.JSONField()

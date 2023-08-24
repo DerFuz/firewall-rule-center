@@ -28,5 +28,5 @@ class ModelTest(TestCase):
             status = 'active',
             requester = 'Hansi'
         )
-
-        self.assertEquals(rule.action, action_str)
+        
+        self.assertEqual(rule.action, action_str)
