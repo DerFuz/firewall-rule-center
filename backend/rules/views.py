@@ -65,7 +65,6 @@ class RuleDestroyAPIView(
     lookup_field = "pk"
 
     def perform_destroy(self, instance):
-        # instance
-        super().perform_destroy(instance)
+        instance.mark_deleted()
         
 rule_delete_view = RuleDestroyAPIView.as_view()
