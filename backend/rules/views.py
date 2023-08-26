@@ -8,7 +8,7 @@ from .serializers import RuleSerializer
 
 class RuleListCreateAPIView(
     generics.ListCreateAPIView):
-    queryset = Rule.objects.all()
+    queryset = Rule.objects.exclude_deleted()
     serializer_class = RuleSerializer
 
     def perform_create(self, serializer):
@@ -37,7 +37,7 @@ rule_list_create_view = RuleListCreateAPIView.as_view()
 
 class RuleDetailAPIView(
     generics.RetrieveAPIView):
-    queryset = Rule.objects.all()
+    queryset = Rule.objects.exclude_deleted()
     serializer_class = RuleSerializer
     lookup_field = "pk"
 
@@ -46,7 +46,7 @@ rule_detail_view = RuleDetailAPIView.as_view()
 
 class RuleUpdateAPIView(
     generics.UpdateAPIView):
-    queryset = Rule.objects.all()
+    queryset = Rule.objects.exclude_deleted()
     serializer_class = RuleSerializer
     lookup_field = "pk"
 
@@ -60,7 +60,7 @@ rule_update_view = RuleUpdateAPIView.as_view()
 
 class RuleDestroyAPIView(
     generics.DestroyAPIView):
-    queryset = Rule.objects.all()
+    queryset = Rule.objects.exclude_deleted()
     serializer_class = RuleSerializer
     lookup_field = "pk"
 
