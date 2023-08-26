@@ -45,10 +45,14 @@ class RuleQuerySet(models.QuerySet):
 
 class RuleManager(models.Manager):
     def get_queryset(self, *args, **kwargs) -> RuleQuerySet:
-        return RuleQuerySet(self.model, using=self._db).is_not_deleted()
+        return RuleQuerySet(self.model, using=self._db)
     
     def search(self, query, user=None) -> RuleQuerySet:
         return self.get_queryset().search(query, user=user)
+    
+    def exclude_deleted(self) -> RuleQuerySet:
+        return self.get_queryset().is_not_deleted()
+    
     
 class Rule(models.Model):
     # RuleAction
