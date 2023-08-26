@@ -19,7 +19,8 @@ class RuleSerializer(serializers.ModelSerializer):
     #related_products = ProductInlineSerializer(source = "user.product_set.all", read_only = True, many = True)
     #my_user_data = serializers.SerializerMethodField(read_only = True) # bad
     #my_discount = serializers.SerializerMethodField(read_only=True)
-    #edit_url = serializers.SerializerMethodField(read_only=True)
+    edit_url = serializers.SerializerMethodField(read_only=True)
+    delete_url = serializers.SerializerMethodField(read_only=True)
     #url = serializers.HyperlinkedIdentityField(
     #    view_name='product-detail',
     #    lookup_field='pk'
@@ -30,24 +31,32 @@ class RuleSerializer(serializers.ModelSerializer):
     #    ])
     class Meta:
         model = Rule
-        fields = [
-            'pk',
-            'action',
-            'source',
-            'destination',
-            'protocol',
-            'port',
-            'status'
-        ]
+        fields = '__all__'
+        #fields = [
+        #    'pk',
+        #    'action',
+        #    'source',
+        #    'destination',
+        #    'protocol',
+        #    'port',
+        #    'status'
+        #]
 
     # def get_my_user_data(self, obj):
     #     return {
     #         "username": obj.user.username
     #     }
 
-    # def get_edit_url(self, obj):
-    #     # return f"/api/products/{obj.pk}/"
-    #     request = self.context.get('request')
-    #     if request is None:
-    #         return None
-    #     return reverse("product-edit", kwargs={"pk": obj.pk}, request=request)
+    def get_edit_url(self, obj):
+        # return f"/api/rules/{obj.pk}/update/"
+        request = self.context.get('request')
+        if request is None:
+            return None
+        return reverse("rule-edit", kwargs={"pk": obj.pk}, request=request)
+    
+    def get_delete_url(self, obj):
+        # return f"/api/rules/{obj.pk}/delete/"
+        request = self.context.get('request')
+        if request is None:
+            return None
+        return reverse("rule-delete", kwargs={"pk": obj.pk}, request=request)
