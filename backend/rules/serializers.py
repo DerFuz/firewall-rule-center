@@ -25,10 +25,10 @@ class RuleSerializer(serializers.ModelSerializer):
     #    view_name='product-detail',
     #    lookup_field='pk'
     #    )
-    #title = serializers.CharField(validators=[
-    #    validators.validate_title_no_hello,
-    #    validators.unique_product_title
-    #    ])
+    source_ip_orig = serializers.CharField(validators=[validators.validate_ip])
+    source_ip_nat = serializers.CharField(validators=[validators.validate_ip])
+    destination_ip_orig = serializers.CharField(validators=[validators.validate_ip])
+    destination_ip_nat = serializers.CharField(validators=[validators.validate_ip])
     class Meta:
         model = Rule
         fields = '__all__'

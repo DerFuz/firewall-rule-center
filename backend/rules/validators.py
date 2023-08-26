@@ -1,12 +1,20 @@
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 
+from ipaddress import (
+    ip_address,
+    ip_network,
+)
+
 from .models import Rule
 
-
-def validate_title_no_hello(value):
-    if "hello" in value.lower():
-        raise serializers.ValidationError(f"{value} is not allowed")
-    return value
-
-unique_product_title = UniqueValidator(queryset=Rule.objects.all(), lookup="iexact")
+def validate_ip(value):
+    try:
+        obj = ip_address(value)
+        return obj
+    except ValueError as e:
+        try:
+            obj = ip_network(value)
+            return obj
+        except ValueError as ee:
+            raise serializers.ValidationError(f"Validation-Error: {e}, {ee}")
