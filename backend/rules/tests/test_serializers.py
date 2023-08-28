@@ -14,8 +14,6 @@ class SerializersTest(TestCase):
     last_updated_by = 'Gerti'
     any_str = 'any'
 
-    print(test_action)
-
     def test_ip_validators(self):
         # Test valid IP addresses
         valid_ips = [
@@ -74,3 +72,52 @@ class SerializersTest(TestCase):
             }
             serializer = serializers.RuleSerializer(data=data)
             self.assertFalse(serializer.is_valid(), f'Expected {ip} to be invalid.')
+
+
+    def test_ip_mutual_exclusion(self):
+        standard_data = {
+            'protocol': "TCP",
+            'source_name': self.any_str,
+            'destination_name': self.any_str,
+            'status': "UNK",
+            'requester': self.requester,
+            'created_by': self.created_by,
+            'last_updated_by': self.last_updated_by
+        }
+        
+        # from itertools import product
+        # test_ip = '10.0.0.1/32'
+        # fields = ['source_ip_orig', 'source_ip_nat', 'destination_ip_orig', 'destination_ip_nat']
+        # print([list(zip(fields, x)) for x in product([test_ip, None], repeat=len(fields))])
+
+        possibilities = [
+            [('source_ip_orig', '10.0.0.1/32'), ('source_ip_nat', '10.0.0.1/32'), ('destination_ip_orig', '10.0.0.1/32'), ('destination_ip_nat', '10.0.0.1/32')],   # legal
+            [('source_ip_orig', '10.0.0.1/32'), ('source_ip_nat', '10.0.0.1/32'), ('destination_ip_orig', '10.0.0.1/32'), ('destination_ip_nat', None)],            # legal
+            [('source_ip_orig', '10.0.0.1/32'), ('source_ip_nat', '10.0.0.1/32'), ('destination_ip_orig', None), ('destination_ip_nat', '10.0.0.1/32')],            # legal
+            [('source_ip_orig', '10.0.0.1/32'), ('source_ip_nat', '10.0.0.1/32'), ('destination_ip_orig', None), ('destination_ip_nat', None)],                     # illegal
+            [('source_ip_orig', '10.0.0.1/32'), ('source_ip_nat', None), ('destination_ip_orig', '10.0.0.1/32'), ('destination_ip_nat', '10.0.0.1/32')],            # legal
+            [('source_ip_orig', '10.0.0.1/32'), ('source_ip_nat', None), ('destination_ip_orig', '10.0.0.1/32'), ('destination_ip_nat', None)],                     # legal
+            [('source_ip_orig', '10.0.0.1/32'), ('source_ip_nat', None), ('destination_ip_orig', None), ('destination_ip_nat', '10.0.0.1/32')],                     # legal
+            [('source_ip_orig', '10.0.0.1/32'), ('source_ip_nat', None), ('destination_ip_orig', None), ('destination_ip_nat', None)],                              # illegal
+            [('source_ip_orig', None), ('source_ip_nat', '10.0.0.1/32'), ('destination_ip_orig', '10.0.0.1/32'), ('destination_ip_nat', '10.0.0.1/32')],            # legal
+            [('source_ip_orig', None), ('source_ip_nat', '10.0.0.1/32'), ('destination_ip_orig', '10.0.0.1/32'), ('destination_ip_nat', None)],                     # legal
+            [('source_ip_orig', None), ('source_ip_nat', '10.0.0.1/32'), ('destination_ip_orig', None), ('destination_ip_nat', '10.0.0.1/32')],                     # legal
+            [('source_ip_orig', None), ('source_ip_nat', '10.0.0.1/32'), ('destination_ip_orig', None), ('destination_ip_nat', None)],                              # illegal
+            [('source_ip_orig', None), ('source_ip_nat', None), ('destination_ip_orig', '10.0.0.1/32'), ('destination_ip_nat', '10.0.0.1/32')],                     # illegal
+            [('source_ip_orig', None), ('source_ip_nat', None), ('destination_ip_orig', '10.0.0.1/32'), ('destination_ip_nat', None)],                              # illegal
+            [('source_ip_orig', None), ('source_ip_nat', None), ('destination_ip_orig', None), ('destination_ip_nat', '10.0.0.1/32')],                              # illegal
+            [('source_ip_orig', None), ('source_ip_nat', None), ('destination_ip_orig', None), ('destination_ip_nat', None)]                                        # illegal
+        ]        
+        for possibility in possibilities:
+            test_data = dict()
+            for (name, value) in possibility:
+                if value is not None:
+                    test_data[name] = value
+
+            serializer = serializers.RuleSerializer(data={**standard_data, **test_data})
+
+            if (test_data.get('source_ip_orig') or test_data.get('source_ip_nat')) \
+                and (test_data.get('destination_ip_orig') or test_data.get('destination_ip_nat')):
+                self.assertTrue(serializer.is_valid(), f'Expected testset to be valid.')
+            else:
+                self.assertFalse(serializer.is_valid(), f'Expected testset to be invalid.')
