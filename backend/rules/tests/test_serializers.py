@@ -1,17 +1,18 @@
 from django.test import TestCase
+from django.contrib.auth.models import User
+from random import randint, choice
 
 from rules import serializers
 from rules import models
 
 class SerializersTest(TestCase):
-    fixtures = ['defaults']
+    fixtures = ['defaults', 'test_user']
 
     test_action = models.RuleAction.objects.filter(code = 'PER').first()
     test_protocol = models.RuleProtocol.objects.filter(code = 'TCP').first()
     test_status = models.RuleStatus.objects.filter(code = 'UNK').first()
-    requester = 'Hansi'
-    created_by = 'Seppi'
-    last_updated_by = 'Gerti'
+    user_count = User.objects.all().count()
+    requester = choice(['Jakob', 'Susi', 'Hansi', 'Lisa'])
     any_str = 'any'
 
     def test_ip_validators(self):
@@ -37,8 +38,6 @@ class SerializersTest(TestCase):
                 'destination_name': self.any_str,
                 'status': "UNK",
                 'requester': self.requester,
-                'created_by': self.created_by,
-                'last_updated_by': self.last_updated_by,
             }
 
             serializer = serializers.RuleSerializer(data=data)
@@ -67,8 +66,6 @@ class SerializersTest(TestCase):
                 'destination_name': self.any_str,
                 'status': "UNK",
                 'requester': self.requester,
-                'created_by': self.created_by,
-                'last_updated_by': self.last_updated_by,
             }
             serializer = serializers.RuleSerializer(data=data)
             self.assertFalse(serializer.is_valid(), f'Expected {ip} to be invalid.')
@@ -81,8 +78,6 @@ class SerializersTest(TestCase):
             'destination_name': self.any_str,
             'status': "UNK",
             'requester': self.requester,
-            'created_by': self.created_by,
-            'last_updated_by': self.last_updated_by
         }
         
         # from itertools import product

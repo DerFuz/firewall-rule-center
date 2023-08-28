@@ -1,17 +1,20 @@
 from django.test import TestCase
 from django.utils import timezone
+from django.contrib.auth.models import User
+from random import randint, choice
 
 from rules import models
 
 class ModelTest(TestCase):
-    fixtures = ["defaults"]
+    fixtures = ['defaults', 'test_user']
 
     test_action = models.RuleAction.objects.filter(code = 'PER').first()
     test_protocol = models.RuleProtocol.objects.filter(code = 'TCP').first()
     test_status = models.RuleStatus.objects.filter(code = 'UNK').first()
-    requester = 'Hansi'
-    created_by = 'Seppi'
-    last_updated_by = 'Gerti'
+    requester = choice(['Jakob', 'Susi', 'Hansi', 'Lisa'])
+    user_count = User.objects.all().count()
+    created_by = User.objects.get(id=randint(1, user_count))
+    last_updated_by = User.objects.get(id=randint(1, user_count))
     any_str = 'any'
 
     def test_create_rule_action(self):
@@ -69,3 +72,41 @@ class ModelTest(TestCase):
         self.assertIsNone(rule.firewalls)
         self.assertIsNone(rule.notes)   
         self.assertFalse(rule.is_deleted)
+
+    def test_rule_soft_deleted(self):
+        rule = models.Rule.objects.create(
+            protocol = self.test_protocol,
+            source_name = self.any_str,
+            destination_name = self.any_str,
+            status = self.test_status,
+            requester = self.requester,
+            created_by = self.created_by,
+            last_updated_by = self.last_updated_by
+        )
+
+        self.assertFalse(rule.is_deleted)
+        self.assertEqual(rule.last_updated_by, self.last_updated_by)
+        rule.soft_deleted(update_user=self.created_by)
+        self.assertTrue(rule.is_deleted)
+        self.assertEqual(rule.last_updated_by, self.created_by)
+
+
+    def test_rule_restore(self):
+        rule = models.Rule.objects.create(
+            protocol = self.test_protocol,
+            source_name = self.any_str,
+            destination_name = self.any_str,
+            status = self.test_status,
+            requester = self.requester,
+            created_by = self.created_by,
+            last_updated_by = self.last_updated_by
+        )
+
+        self.assertFalse(rule.is_deleted)
+        self.assertEqual(rule.last_updated_by, self.last_updated_by)
+        rule.soft_deleted(update_user=self.created_by)
+        self.assertTrue(rule.is_deleted)
+        self.assertEqual(rule.last_updated_by, self.created_by)
+        rule.restore(update_user=self.last_updated_by)
+        self.assertFalse(rule.is_deleted)
+        self.assertEqual(rule.last_updated_by, self.last_updated_by)
