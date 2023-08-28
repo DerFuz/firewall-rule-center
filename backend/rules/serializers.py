@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from rest_framework.reverse import reverse
 
+from api.serializers import UserPublicSerializer
+
 from .models import Rule
 from . import validators
 
@@ -27,6 +29,8 @@ class RuleSerializer(serializers.ModelSerializer):
     source_ip_nat = serializers.CharField(required=False, validators=[validators.validate_ip])
     destination_ip_orig = serializers.CharField(required=False, validators=[validators.validate_ip])
     destination_ip_nat = serializers.CharField(required=False, validators=[validators.validate_ip])
+    last_updated_by = UserPublicSerializer(read_only=True)
+    created_by = UserPublicSerializer(read_only=True)
     class Meta:
         model = Rule
         fields = '__all__'

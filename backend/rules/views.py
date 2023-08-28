@@ -1,7 +1,4 @@
-from rest_framework import generics, mixins
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from django.shortcuts import get_object_or_404
+from rest_framework import generics
 
 from .models import Rule
 from .serializers import RuleSerializer
@@ -12,7 +9,11 @@ class RuleListCreateAPIView(
     serializer_class = RuleSerializer
 
     def perform_create(self, serializer):
-        serializer.save()
+        data = {
+            'created_by': self.request.user,
+            'last_updated_by': self.request.user
+        }
+        serializer.save(**data)
         #serializer.save(user = self.request.user)
         # email = serializer.validated_data.pop('email')
         # print(email)
@@ -51,7 +52,10 @@ class RuleUpdateAPIView(
     lookup_field = "pk"
 
     def perform_update(self, serializer):
-        instance = serializer.save()
+        data = {
+            'last_updated_by': self.request.user
+        }
+        instance = serializer.save(**data)
         #if not instance.content:
         #    instance.content = instance.title
 
@@ -65,6 +69,6 @@ class RuleDestroyAPIView(
     lookup_field = "pk"
 
     def perform_destroy(self, instance):
-        instance.mark_deleted()
+        instance.soft_deleted(self.request.user)
         
 rule_delete_view = RuleDestroyAPIView.as_view()

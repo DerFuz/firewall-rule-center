@@ -1,6 +1,8 @@
 from django.db import models
-from django.db.models.query import QuerySet
+from django.conf import settings
 from django.db.models import Q
+
+User = settings.AUTH_USER_MODEL # auth.user
 
 class RuleAction(models.Model):
     code = models.CharField(max_length=3, primary_key=True)
@@ -31,13 +33,13 @@ class RuleStatus(models.Model):
 
 
 class RuleQuerySet(models.QuerySet):
-    def is_deleted(self) -> QuerySet:
+    def is_deleted(self) -> models.QuerySet:
         return self.filter(is_deleted=True)
     
-    def is_not_deleted(self) -> QuerySet:
+    def is_not_deleted(self) -> models.QuerySet:
         return self.filter(is_deleted=False)
     
-    def search(self, query, user=None) -> QuerySet:
+    def search(self, query, user=None) -> models.QuerySet:
         lookup = Q(source_ip_orig__icontains = query) | Q(destination_ip_orig__icontains = query)
         qs = self.is_not_deleted().filter(lookup)
         return qs
@@ -47,8 +49,8 @@ class RuleManager(models.Manager):
     def get_queryset(self, *args, **kwargs) -> RuleQuerySet:
         return RuleQuerySet(self.model, using=self._db)
     
-    def search(self, query, user=None) -> RuleQuerySet:
-        return self.get_queryset().search(query, user=user)
+    #def search(self, query, user=None) -> RuleQuerySet:
+    #    return self.get_queryset().search(query, user=user)
     
     def exclude_deleted(self) -> RuleQuerySet:
         return self.get_queryset().is_not_deleted()
@@ -62,7 +64,6 @@ class Rule(models.Model):
     protocol = models.ForeignKey(RuleProtocol, on_delete=models.PROTECT)
 
     # Source
-    # TODO source and destination create a validator
     # TODO reference object in the future maybe?
     source_name = models.CharField(max_length=100)
     source_ip_orig = models.CharField(max_length=100, blank=True, null=True)
@@ -85,15 +86,13 @@ class Rule(models.Model):
     created_on = models.DateTimeField(auto_now_add=True)
 
     # Creator of this rule entry
-    # TODO link with user reference object
-    created_by = models.CharField(max_length=100)
+    created_by = models.ForeignKey(User, related_name='created_by', on_delete=models.PROTECT)
 
     # Rule entry update timestamp
     last_updated_on = models.DateTimeField(auto_now=True)
 
     # Last user that updated this rule entry
-    # TODO link with user reference object
-    last_updated_by = models.CharField(max_length=100)
+    last_updated_by = models.ForeignKey(User, related_name='last_updated_by', on_delete=models.PROTECT)
 
     # Ticket number, etc
     ticket = models.CharField(max_length=20, blank=True, null=True)
@@ -116,6 +115,12 @@ from [{self.source_name} - {self.source_ip_orig}/{self.source_port}] \
 to [{self.destination_name} - {self.destination_ip_orig}/{self.destination_port}] \
 requested by [{self.requester}] in status [{self.status}]'
 
-    def mark_deleted(self):
+    def soft_deleted(self, update_user):
         self.is_deleted = True
+        self.last_updated_by = update_user
+        self.save()
+
+    def restore(self, update_user):
+        self.is_deleted = False
+        self.last_updated_by = update_user
         self.save()
