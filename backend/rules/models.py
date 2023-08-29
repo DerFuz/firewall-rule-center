@@ -31,6 +31,13 @@ class RuleStatus(models.Model):
         return f'{self.display} ({self.description})'
 
 
+class FirewallObject(models.Model):
+    hostname = models.CharField(max_length=50, primary_key=True)
+    vendor = models.CharField(max_length=50)
+
+    def __str__(self) -> str:
+        return f'{self.hostname}'
+
 
 class RuleQuerySet(models.QuerySet):
     def is_deleted(self) -> models.QuerySet:
@@ -98,8 +105,7 @@ class Rule(models.Model):
     ticket = models.CharField(max_length=20, blank=True, null=True)
 
     # list of firewalls
-    # TODO link with firewall reference objects
-    firewalls = models.JSONField(null=True)
+    firewalls = models.ManyToManyField(FirewallObject)
 
     # Notes about this entry
     notes = models.CharField(max_length=200, blank=True, null=True)

@@ -41,6 +41,14 @@ class ModelTest(TestCase):
         )
         self.assertIsInstance(rule_status, models.RuleStatus)
 
+    def test_create_firewall_object(self):
+        firewall_object = models.FirewallObject.objects.create(
+            hostname = 'FirewallX',
+            vendor = 'Checkpoint'
+        )
+        self.assertIsInstance(firewall_object, models.FirewallObject)
+        self.assertEqual(str(firewall_object), 'FirewallX')
+
     def test_create_rule(self):
         rule = models.Rule.objects.create(
             protocol = self.test_protocol,
@@ -52,6 +60,7 @@ class ModelTest(TestCase):
             last_updated_by = self.last_updated_by
         )
 
+        self.assertIsInstance(rule, models.Rule)
         self.assertEqual(rule.action, self.test_action)
         self.assertEqual(rule.protocol, self.test_protocol)
         self.assertEqual(rule.source_name, self.any_str)
@@ -69,7 +78,7 @@ class ModelTest(TestCase):
         self.assertLessEqual(rule.last_updated_on, timezone.now())
         self.assertEqual(rule.last_updated_by, self.last_updated_by)
         self.assertIsNone(rule.ticket)
-        self.assertIsNone(rule.firewalls)
+        self.assertEqual(rule.firewalls.all().count(), 0)
         self.assertIsNone(rule.notes)   
         self.assertFalse(rule.is_deleted)
 
@@ -89,7 +98,6 @@ class ModelTest(TestCase):
         rule.soft_deleted(update_user=self.created_by)
         self.assertTrue(rule.is_deleted)
         self.assertEqual(rule.last_updated_by, self.created_by)
-
 
     def test_rule_restore(self):
         rule = models.Rule.objects.create(

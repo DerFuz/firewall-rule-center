@@ -1,0 +1,16 @@
+[
+    {
+        "model": "rules.firewallobject",
+        "pk": "Firewall1",
+        "fields": {
+            "vendor": "Cisco"
+        }
+    },
+    {
+        "model": "rules.firewallobject",
+        "pk": "Firewall2",
+        "fields": {
+            "vendor": "Palo"
+        }
+    }
+    ]
