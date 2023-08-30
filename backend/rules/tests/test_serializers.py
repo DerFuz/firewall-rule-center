@@ -43,7 +43,7 @@ class SerializersTest(TestCase):
             }
 
             serializer = serializers.RuleSerializer(data=data)
-            self.assertTrue(serializer.is_valid(raise_exception=True), f'Expected {ip} to be valid.')
+            self.assertTrue(serializer.is_valid(), f'Expected {ip} to be valid.')
 
         # Test invalid IP addresses
         invalid_ips = [
@@ -71,7 +71,7 @@ class SerializersTest(TestCase):
                 'firewalls': self.test_firewalls,
             }
             serializer = serializers.RuleSerializer(data=data)
-            self.assertFalse(serializer.is_valid(raise_exception=True), f'Expected {ip} to be invalid.')
+            self.assertFalse(serializer.is_valid(), f'Expected {ip} to be invalid.')
 
 
     def test_ip_mutual_exclusion(self):
@@ -117,6 +117,6 @@ class SerializersTest(TestCase):
 
             if (test_data.get('source_ip_orig') or test_data.get('source_ip_nat')) \
                 and (test_data.get('destination_ip_orig') or test_data.get('destination_ip_nat')):
-                self.assertTrue(serializer.is_valid(raise_exception=True), f'Expected testset to be valid.')
+                self.assertTrue(serializer.is_valid(), f'Expected testset [{test_data}] to be valid.')
             else:
-                self.assertFalse(serializer.is_valid(raise_exception=True), f'Expected testset to be invalid.')
+                self.assertFalse(serializer.is_valid(), f'Expected testset [{test_data}] to be invalid.')

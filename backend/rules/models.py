@@ -36,7 +36,7 @@ class FirewallObject(models.Model):
     vendor = models.CharField(max_length=50)
 
     def __str__(self) -> str:
-        return f'{self.hostname}'
+        return self.hostname
 
 
 class RuleQuerySet(models.QuerySet):
@@ -105,7 +105,7 @@ class Rule(models.Model):
     ticket = models.CharField(max_length=20, blank=True, null=True)
 
     # list of firewalls
-    firewalls = models.ManyToManyField(FirewallObject)
+    firewalls = models.ManyToManyField(to=FirewallObject, related_name='rule_firewalls')
 
     # Notes about this entry
     notes = models.CharField(max_length=200, blank=True, null=True)

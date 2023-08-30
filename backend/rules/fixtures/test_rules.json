@@ -20,7 +20,7 @@
             "last_updated_on": "2023-08-27T20:18:21.910Z",
             "last_updated_by": "1",
             "ticket": "#123",
-            "firewalls": null,
+            "firewalls": [],
             "notes": "Client1 to Server1 HTTPS",
             "is_deleted": false
         }
@@ -46,7 +46,7 @@
             "last_updated_on": "2023-08-27T20:18:21.910Z",
             "last_updated_by": "3",
             "ticket": "#126",
-            "firewalls": null,
+            "firewalls": [],
             "notes": "No DNS to Google-DNS (UDP)",
             "is_deleted": false
         }
@@ -72,7 +72,7 @@
             "last_updated_on": "2023-08-27T20:18:21.910Z",
             "last_updated_by": "3",
             "ticket": "#126",
-            "firewalls": null,
+            "firewalls": [],
             "notes": "No DNS to Google-DNS (UDP)",
             "is_deleted": false
         }
@@ -98,7 +98,7 @@
             "last_updated_on": "2023-08-27T20:18:21.910Z",
             "last_updated_by": "1",
             "ticket": "#98",
-            "firewalls": null,
+            "firewalls": [],
             "notes": "Server1 allow all internet",
             "is_deleted": false
         }
@@ -124,7 +124,7 @@
             "last_updated_on": "2023-08-27T20:18:21.910Z",
             "last_updated_by": "1",
             "ticket": "#98",
-            "firewalls": null,
+            "firewalls": [],
             "notes": "Server2 allow all internet",
             "is_deleted": true
         }

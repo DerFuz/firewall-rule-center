@@ -24,6 +24,13 @@ class FirewallObjectSerializer(serializers.ModelSerializer):
             'hostname'
         ]
 
+        extra_kwargs = {
+            'hostname': {'validators': []},
+        }
+
+        # TODO ensure uniqueness constraint for creation and update
+        # https://stackoverflow.com/questions/38438167/unique-validation-on-nested-serializer-on-django-rest-framework/
+
     
 class RuleSerializer(serializers.ModelSerializer):
     #related_products = ProductInlineSerializer(source = "user.product_set.all", read_only = True, many = True)
@@ -46,7 +53,6 @@ class RuleSerializer(serializers.ModelSerializer):
     destination_ip_nat = serializers.CharField(required=False, validators=[validators.validate_ip])
     last_updated_by = UserPublicSerializer(read_only=True)
     created_by = UserPublicSerializer(read_only=True)
-    # TODO make firewalls not writable but usable in Rule
     firewalls = FirewallObjectSerializer(many=True)
     class Meta:
         model = Rule
@@ -82,7 +88,6 @@ class RuleSerializer(serializers.ModelSerializer):
     #     return {
     #         "username": obj.user.username
     #     }
-
 
     def validate(self, data):
         if not data.get('source_ip_orig') and not data.get('source_ip_nat'):
