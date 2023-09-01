@@ -4,4 +4,3 @@ from .models import Rule, FirewallObject
 
 admin.site.register(Rule)
 admin.site.register(FirewallObject)
-
