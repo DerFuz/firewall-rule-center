@@ -6,11 +6,11 @@ from rules import serializers
 from rules import models
 
 class SerializersTest(TestCase):
-    fixtures = ['defaults', 'test_user', 'test_firewallobjects']
+    fixtures = ['test_user', 'test_firewallobjects']
 
-    test_action = models.RuleAction.objects.filter(code = 'PER').first()
-    test_protocol = models.RuleProtocol.objects.filter(code = 'TCP').first()
-    test_status = models.RuleStatus.objects.filter(code = 'UNK').first()
+    test_action = choice(models.Rule.RULE_ACTION_CHOICES)[0]
+    test_protocol = choice(models.Rule.RULE_PROTOCOL_CHOICES)[0]
+    test_status = choice(models.Rule.RULE_STATUS_CHOICES)[0]
     test_firewalls = list(models.FirewallObject.objects.values('hostname'))
     user_count = User.objects.all().count()
     requester = choice(['Jakob', 'Susi', 'Hansi', 'Lisa'])
@@ -34,10 +34,10 @@ class SerializersTest(TestCase):
                 'source_ip_nat': ip,
                 'destination_ip_orig': ip,
                 'destination_ip_nat': ip,
-                'protocol': "TCP",
+                'protocol': self.test_protocol,
                 'source_name': self.any_str,
                 'destination_name': self.any_str,
-                'status': "UNK",
+                'status': self.test_status,
                 'requester': self.requester,
                 'firewalls': self.test_firewalls,
             }
@@ -63,10 +63,10 @@ class SerializersTest(TestCase):
                 'source_ip_nat': ip,
                 'destination_ip_orig': ip,
                 'destination_ip_nat': ip,
-                'protocol': "TCP",
+                'protocol': self.test_protocol,
                 'source_name': self.any_str,
                 'destination_name': self.any_str,
-                'status': "UNK",
+                'status': self.test_status,
                 'requester': self.requester,
                 'firewalls': self.test_firewalls,
             }
@@ -76,10 +76,10 @@ class SerializersTest(TestCase):
 
     def test_ip_mutual_exclusion(self):
         standard_data = {
-            'protocol': "TCP",
+            'protocol': self.test_protocol,
             'source_name': self.any_str,
             'destination_name': self.any_str,
-            'status': "UNK",
+            'status': self.test_status,
             'requester': self.requester,
             'firewalls': self.test_firewalls,
         }

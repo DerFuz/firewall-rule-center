@@ -4,32 +4,6 @@ from django.db.models import Q
 
 User = settings.AUTH_USER_MODEL # auth.user
 
-class RuleAction(models.Model):
-    code = models.CharField(max_length=3, primary_key=True)
-    display = models.CharField(max_length=10)
-    description = models.CharField(max_length=50, blank=True, null=True)
-
-    def __str__(self) -> str:
-        return f'{self.display} ({self.description})'
-
-
-class RuleProtocol(models.Model):
-    code = models.CharField(max_length=3, primary_key=True)
-    display = models.CharField(max_length=10)
-    description = models.CharField(max_length=50, blank=True, null=True)
-
-    def __str__(self) -> str:
-        return f'{self.display} ({self.description})'
-
-
-class RuleStatus(models.Model):
-    code = models.CharField(max_length=3, primary_key=True)
-    display = models.CharField(max_length=10)
-    description = models.CharField(max_length=50, blank=True, null=True)
-
-    def __str__(self) -> str:
-        return f'{self.display} ({self.description})'
-
 
 class FirewallObject(models.Model):
     hostname = models.CharField(max_length=50, primary_key=True)
@@ -64,11 +38,51 @@ class RuleManager(models.Manager):
     
     
 class Rule(models.Model):
+    # Action Choices
+    PERMIT = 'PER'
+    DENY = 'DEN'
+    
+    RULE_ACTION_CHOICES = [
+        (PERMIT, 'Permit'),
+        (DENY, 'Deny')
+    ]
+
+    # Protocol Choices
+    TCP = 'TCP'
+    UDP = 'UDP'
+    TCP_UDP = 'TCPUDP'
+    ICMP = 'ICMP'
+    
+    RULE_PROTOCOL_CHOICES = [
+        (TCP, 'TCP'),
+        (UDP, 'UDP'),
+        (TCP_UDP, 'TCP and UDP'),
+        (ICMP, 'ICMP')
+    ]
+
+    # Status Choices
+    REQUESTED = 'REQ'
+    REFUSED = 'REF'
+    APPROVED = 'APR'
+    CONFIGURED = 'CON'
+    TESTED = 'TES'
+    DELETED = 'DEL'
+    
+    RULE_STATUS_CHOICES = [
+        (REQUESTED, 'Rule requested'),
+        (REFUSED, 'Rule refused'),
+        (APPROVED, 'Rule approved'),
+        (CONFIGURED, 'Rule configured'),
+        (TESTED, 'Rule tested'),
+        (DELETED, 'Rule deleted')
+    ]
+
+
     # RuleAction
-    action = models.ForeignKey(RuleAction, default='PER', on_delete=models.PROTECT)
+    action = models.CharField(max_length=3, choices=RULE_ACTION_CHOICES, default=PERMIT)
     
     # RuleProtocol
-    protocol = models.ForeignKey(RuleProtocol, on_delete=models.PROTECT)
+    protocol = models.CharField(max_length=6, choices=RULE_PROTOCOL_CHOICES)
 
     # Source
     # TODO reference object in the future maybe?
@@ -84,7 +98,7 @@ class Rule(models.Model):
     destination_port = models.PositiveIntegerField(null=True)
 
     # RuleStatus
-    status = models.ForeignKey(RuleStatus, on_delete=models.PROTECT)
+    status = models.CharField(max_length=3, choices=RULE_STATUS_CHOICES)
 
     # Requester of the rule
     requester = models.CharField(max_length=70)

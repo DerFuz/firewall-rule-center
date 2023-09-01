@@ -6,40 +6,16 @@ from random import randint, choice
 from rules import models
 
 class ModelTest(TestCase):
-    fixtures = ['defaults', 'test_user']
+    fixtures = ['test_user']
 
-    test_action = models.RuleAction.objects.filter(code = 'PER').first()
-    test_protocol = models.RuleProtocol.objects.filter(code = 'TCP').first()
-    test_status = models.RuleStatus.objects.filter(code = 'UNK').first()
+    test_action = choice(models.Rule.RULE_ACTION_CHOICES)[0]
+    test_protocol = choice(models.Rule.RULE_PROTOCOL_CHOICES)[0]
+    test_status = choice(models.Rule.RULE_STATUS_CHOICES)[0]
     requester = choice(['Jakob', 'Susi', 'Hansi', 'Lisa'])
     user_count = User.objects.all().count()
     created_by = User.objects.get(id=randint(1, user_count))
     last_updated_by = User.objects.get(id=randint(1, user_count))
     any_str = 'any'
-
-    def test_create_rule_action(self):
-        rule_action = models.RuleAction.objects.create(
-            code = 'TEST',
-            display = 'Testing',
-            description = 'This is the testing action'
-        )
-        self.assertIsInstance(rule_action, models.RuleAction)
-
-    def test_create_rule_protocol(self):
-        rule_protocol = models.RuleProtocol.objects.create(
-            code = 'ICMP',
-            display = 'Icmp',
-            description = 'Internet Control Message Protocol'
-        )
-        self.assertIsInstance(rule_protocol, models.RuleProtocol)
-
-    def test_create_rule_status(self):
-        rule_status = models.RuleStatus.objects.create(
-            code = 'XX',
-            display = 'Xxxx',
-            description = 'Exiting :)'
-        )
-        self.assertIsInstance(rule_status, models.RuleStatus)
 
     def test_create_firewall_object(self):
         firewall_object = models.FirewallObject.objects.create(
@@ -51,6 +27,7 @@ class ModelTest(TestCase):
 
     def test_create_rule(self):
         rule = models.Rule.objects.create(
+            action = self.test_action,
             protocol = self.test_protocol,
             source_name = self.any_str,
             destination_name = self.any_str,
