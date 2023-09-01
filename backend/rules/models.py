@@ -2,6 +2,8 @@ from django.db import models
 from django.conf import settings
 from django.db.models import Q
 
+from rulesetrequests.models import RuleSetRequest
+
 User = settings.AUTH_USER_MODEL # auth.user
 
 
@@ -52,12 +54,14 @@ class Rule(models.Model):
     UDP = 'UDP'
     TCP_UDP = 'TCPUDP'
     ICMP = 'ICMP'
+    IP = 'IP'
     
     RULE_PROTOCOL_CHOICES = [
         (TCP, 'TCP'),
         (UDP, 'UDP'),
         (TCP_UDP, 'TCP and UDP'),
-        (ICMP, 'ICMP')
+        (ICMP, 'ICMP'),
+        (IP, 'IP'),
     ]
 
     # Status Choices
@@ -78,26 +82,26 @@ class Rule(models.Model):
     ]
 
 
-    # RuleAction
+    # Action
     action = models.CharField(max_length=3, choices=RULE_ACTION_CHOICES, default=PERMIT)
     
-    # RuleProtocol
+    # Protocol
     protocol = models.CharField(max_length=6, choices=RULE_PROTOCOL_CHOICES)
 
     # Source
     # TODO reference object in the future maybe?
     source_name = models.CharField(max_length=100)
-    source_ip_orig = models.CharField(max_length=100, blank=True, null=True)
-    source_ip_nat = models.CharField(max_length=100, blank=True, null=True)
-    source_port = models.PositiveIntegerField(null=True)
+    source_ip_orig = models.CharField(max_length=100, blank=True)
+    source_ip_nat = models.CharField(max_length=100, blank=True)
+    source_port = models.PositiveIntegerField(blank=True, null=True)
 
     # Destination
     destination_name = models.CharField(max_length=100)
-    destination_ip_orig = models.CharField(max_length=100, blank=True, null=True)
-    destination_ip_nat = models.CharField(max_length=100, blank=True, null=True)
-    destination_port = models.PositiveIntegerField(null=True)
+    destination_ip_orig = models.CharField(max_length=100, blank=True)
+    destination_ip_nat = models.CharField(max_length=100, blank=True)
+    destination_port = models.PositiveIntegerField(blank=True, null=True)
 
-    # RuleStatus
+    # Status
     status = models.CharField(max_length=3, choices=RULE_STATUS_CHOICES)
 
     # Requester of the rule
@@ -107,22 +111,25 @@ class Rule(models.Model):
     created_on = models.DateTimeField(auto_now_add=True)
 
     # Creator of this rule entry
-    created_by = models.ForeignKey(User, related_name='created_by', on_delete=models.PROTECT)
+    created_by = models.ForeignKey(User, related_name='rule_created_by', editable=False, on_delete=models.PROTECT)
 
     # Rule entry update timestamp
     last_updated_on = models.DateTimeField(auto_now=True)
 
     # Last user that updated this rule entry
-    last_updated_by = models.ForeignKey(User, related_name='last_updated_by', on_delete=models.PROTECT)
+    last_updated_by = models.ForeignKey(User, related_name='rule_last_updated_by', editable=False, on_delete=models.PROTECT)
 
     # Ticket number, etc
-    ticket = models.CharField(max_length=20, blank=True, null=True)
+    ticket = models.CharField(max_length=20, blank=True)
+
+    # RuleSetRequest
+    rule_set_request = models.ForeignKey(RuleSetRequest, related_name='rule_rule_set_request', blank=True, null=True, on_delete=models.SET_NULL)
 
     # list of firewalls
     firewalls = models.ManyToManyField(to=FirewallObject, related_name='rule_firewalls')
 
     # Notes about this entry
-    notes = models.CharField(max_length=200, blank=True, null=True)
+    notes = models.CharField(max_length=200, blank=True)
 
     # mark rule entry as deleted
     is_deleted = models.BooleanField(default=False)

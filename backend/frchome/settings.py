@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'rest_framework',
     # custom
     'api',
-    'rules'
+    'rules',
+    'rulesetrequests',
 ]
 
 MIDDLEWARE = [
