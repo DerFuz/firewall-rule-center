@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.db.models import Q
+from simple_history.models import HistoricalRecords
 
 from rulesetrequests.models import RuleSetRequest
 
@@ -10,6 +11,8 @@ User = settings.AUTH_USER_MODEL # auth.user
 class FirewallObject(models.Model):
     hostname = models.CharField(max_length=50, primary_key=True)
     vendor = models.CharField(max_length=50)
+    # historical records
+    history = HistoricalRecords()
 
     def __str__(self) -> str:
         return self.hostname
@@ -133,6 +136,9 @@ class Rule(models.Model):
 
     # mark rule entry as deleted
     is_deleted = models.BooleanField(default=False)
+
+    # historical records
+    history = HistoricalRecords(m2m_fields=[firewalls])
 
     objects = RuleManager()
 

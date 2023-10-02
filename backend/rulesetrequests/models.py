@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from simple_history.models import HistoricalRecords
 
 User = settings.AUTH_USER_MODEL # auth.user
 
@@ -34,3 +35,6 @@ class RuleSetRequest(models.Model):
 
     # Last user that updated this RuleSetRequest entry
     last_updated_by = models.ForeignKey(User, related_name='rulesetrequest_last_updated_by', on_delete=models.PROTECT)
+
+    # historical records
+    history = HistoricalRecords()

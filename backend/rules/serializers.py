@@ -1,7 +1,7 @@
 from rest_framework import serializers
 #from rest_framework.reverse import reverse
 
-from api.serializers import UserPublicSerializer
+from api.serializers import UserPublicSerializer, HistoricalRecordSerializer
 
 from .models import Rule, FirewallObject
 from . import validators
@@ -54,6 +54,7 @@ class RuleSerializer(serializers.ModelSerializer):
     last_updated_by = UserPublicSerializer(read_only=True)
     created_by = UserPublicSerializer(read_only=True)
     firewalls = FirewallObjectSerializer(required=False, many=True)
+    history = HistoricalRecordSerializer(read_only=True)
     
     class Meta:
         model = Rule
@@ -82,7 +83,8 @@ class RuleSerializer(serializers.ModelSerializer):
             'is_deleted',
             'detail_url',
             'edit_url',
-            'delete_url'
+            'delete_url',
+            'history',
         ]
 
     def validate(self, data):
