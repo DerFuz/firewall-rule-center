@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from .models import RuleSetRequest
 from rules.serializers import RuleInlineSerializer
-from api.serializers import UserPublicSerializer
+from api.serializers import UserPublicSerializer, HistoricalRecordSerializer
 
 
 class RuleSetRequestSerializer(serializers.ModelSerializer):
@@ -20,6 +20,7 @@ class RuleSetRequestSerializer(serializers.ModelSerializer):
     approver = UserPublicSerializer()
     last_updated_by = UserPublicSerializer(read_only=True)
     created_by = UserPublicSerializer(read_only=True)
+    history = HistoricalRecordSerializer(read_only=True)
 
 
     class Meta:
@@ -35,4 +36,5 @@ class RuleSetRequestSerializer(serializers.ModelSerializer):
             'last_updated_by',
             'detail_url',
             'edit_url',
+            'history',
         ]
