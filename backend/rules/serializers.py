@@ -55,6 +55,7 @@ class RuleSerializer(serializers.ModelSerializer):
     created_by = UserPublicSerializer(read_only=True)
     firewalls = FirewallObjectSerializer(required=False, many=True)
     history = HistoricalRecordSerializer(read_only=True)
+    # TODO firewall m2m history
     
     class Meta:
         model = Rule
@@ -93,3 +94,17 @@ class RuleSerializer(serializers.ModelSerializer):
         if not data.get('destination_ip_orig') and not data.get('destination_ip_nat'):
             raise serializers.ValidationError('at least one destination input is required')
         return data
+    
+    def create(self, validated_data):
+        firewalls_data = validated_data.pop('firewalls')
+        firewall_objs = []
+        for firewall_data in firewalls_data:
+            res = FirewallObject.objects.filter(hostname=firewall_data['hostname'])
+            if res:
+                firewall_objs += FirewallObject.objects.filter(hostname=firewall_data['hostname'])
+            else:
+                raise serializers.ValidationError('Firewall does not exist')
+        rule = Rule.objects.create(**validated_data)
+        print(firewall_objs)
+        rule.firewalls.set(firewall_objs)
+        return rule

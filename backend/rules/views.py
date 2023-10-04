@@ -1,4 +1,8 @@
-from rest_framework import generics
+from rest_framework import generics, views
+from rest_framework.parsers import FileUploadParser
+from rest_framework.response import Response
+
+import csv, json
 
 from .models import Rule
 from .serializers import RuleSerializer
@@ -72,3 +76,30 @@ class RuleDestroyAPIView(
         instance.soft_deleted(self.request.user)
         
 rule_delete_view = RuleDestroyAPIView.as_view()
+
+
+class RuleImportAPIView(
+    views.APIView):
+
+    parser_classes = (FileUploadParser,)
+
+    def post(self, request, *args, **kwargs):
+        data = {
+            'created_by': self.request.user,
+            'last_updated_by': self.request.user
+        }
+
+        file_obj = request.data['file']
+        decoded_file = file_obj.read().decode('utf-8').splitlines()
+        reader = csv.DictReader(decoded_file)
+
+        for row in reader:
+            firewalls = [{"hostname": i } for i in row['firewalls'].split(',') ]
+            row['firewalls'] = firewalls
+            serializer = RuleSerializer(data=row)
+            if serializer.is_valid():
+                serializer.save(**data)
+
+        return Response(status=204)
+        
+rule_import_view = RuleImportAPIView.as_view()
