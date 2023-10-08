@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import ldap
+from django_auth_ldap.config import LDAPSearch, GroupOfNamesType
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -56,6 +58,55 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'simple_history.middleware.HistoryRequestMiddleware',
 ]
+
+# Baseline configuration.
+AUTH_LDAP_SERVER_URI = 'ldap://127.0.0.1'
+AUTH_LDAP_BIND_DN = 'cn=bind-user,ou=people,dc=frc,dc=org'
+AUTH_LDAP_BIND_PASSWORD = 'bind1234'
+AUTH_LDAP_USER_SEARCH = LDAPSearch(
+    'ou=people,dc=frc,dc=org',
+    ldap.SCOPE_SUBTREE,
+    '(uid=%(user)s)',
+)
+
+# Set up the basic group parameters.
+AUTH_LDAP_GROUP_SEARCH = LDAPSearch(
+    'ou=groups,dc=frc,dc=org',
+    ldap.SCOPE_SUBTREE,
+    '(objectClass=groupOfNames)',
+)
+AUTH_LDAP_GROUP_TYPE = GroupOfNamesType(name_attr='cn')
+
+# Populate the Django user from the LDAP directory.
+AUTH_LDAP_USER_ATTR_MAP = {
+    'first_name': 'givenName',
+    'last_name': 'sn',
+    'email': 'mail',
+}
+
+AUTH_LDAP_USER_FLAGS_BY_GROUP = {
+    #'is_active': 'cn=active,ou=django,ou=groups,dc=example,dc=com',
+    'is_staff': 'cn=nw-admin,ou=groups,dc=frc,dc=org',
+    #'is_superuser': 'cn=superuser,ou=django,ou=groups,dc=example,dc=com',
+    'nw-admin': 'cn=nw-admin,ou=groups,dc=frc,dc=org',
+}
+
+# This is the default, but I like to be explicit.
+AUTH_LDAP_ALWAYS_UPDATE_USER = True
+
+# Use LDAP group membership to calculate group permissions.
+AUTH_LDAP_FIND_GROUP_PERMS = True
+
+# Cache distinguished names and group memberships for an hour to minimize
+# LDAP traffic.
+AUTH_LDAP_CACHE_TIMEOUT = 3600
+
+# Keep ModelBackend around for per-user permissions and maybe a local
+# superuser.
+AUTHENTICATION_BACKENDS = (
+    'django_auth_ldap.backend.LDAPBackend',
+    'django.contrib.auth.backends.ModelBackend',
+)
 
 ROOT_URLCONF = 'frchome.urls'
 
