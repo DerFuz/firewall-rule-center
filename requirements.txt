@@ -5,3 +5,4 @@ pyyaml
 requests
 django-cors-headers
 django-simple-history
+django-auth-ldap
