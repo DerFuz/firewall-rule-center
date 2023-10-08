@@ -7,9 +7,17 @@ import csv
 
 from .models import Rule
 from .serializers import RuleSerializer
+from api.mixins import (
+    NWAdminPermissionMixin,
+    AuditorPermissionMixin,
+    UserPermissionMixin
+)
 
 class RuleListCreateAPIView(
-    generics.ListCreateAPIView):
+    generics.ListCreateAPIView,
+    NWAdminPermissionMixin,
+    AuditorPermissionMixin,
+    UserPermissionMixin):
     queryset = Rule.objects.exclude_deleted()
     serializer_class = RuleSerializer
 
@@ -42,7 +50,10 @@ rule_list_create_view = RuleListCreateAPIView.as_view()
 
 
 class RuleDetailAPIView(
-    generics.RetrieveAPIView):
+    generics.RetrieveAPIView,
+    NWAdminPermissionMixin,
+    AuditorPermissionMixin,
+    UserPermissionMixin):
     queryset = Rule.objects.exclude_deleted()
     serializer_class = RuleSerializer
     lookup_field = "pk"
@@ -51,7 +62,9 @@ rule_detail_view = RuleDetailAPIView.as_view()
 
 
 class RuleUpdateAPIView(
-    generics.UpdateAPIView):
+    generics.UpdateAPIView,
+    NWAdminPermissionMixin,
+    UserPermissionMixin):
     queryset = Rule.objects.exclude_deleted()
     serializer_class = RuleSerializer
     lookup_field = "pk"
@@ -68,7 +81,8 @@ rule_update_view = RuleUpdateAPIView.as_view()
 
 
 class RuleDestroyAPIView(
-    generics.DestroyAPIView):
+    generics.DestroyAPIView,
+    NWAdminPermissionMixin):
     queryset = Rule.objects.exclude_deleted()
     serializer_class = RuleSerializer
     lookup_field = "pk"

@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import datetime
 import ldap
 from django_auth_ldap.config import LDAPSearch, GroupOfNamesType
 
@@ -41,6 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # apps
     'rest_framework',
+    'rest_framework.authtoken',
+    'rest_framework_simplejwt',
     'simple_history',
     # custom
     'api',
@@ -84,12 +87,12 @@ AUTH_LDAP_USER_ATTR_MAP = {
     'email': 'mail',
 }
 
-AUTH_LDAP_USER_FLAGS_BY_GROUP = {
+#AUTH_LDAP_USER_FLAGS_BY_GROUP = {
     #'is_active': 'cn=active,ou=django,ou=groups,dc=example,dc=com',
-    'is_staff': 'cn=nw-admin,ou=groups,dc=frc,dc=org',
+    #'is_staff': 'cn=nw-admin,ou=groups,dc=frc,dc=org',
     #'is_superuser': 'cn=superuser,ou=django,ou=groups,dc=example,dc=com',
-    'nw-admin': 'cn=nw-admin,ou=groups,dc=frc,dc=org',
-}
+    #'nw-admin': 'cn=nw-admin,ou=groups,dc=frc,dc=org',
+#}
 
 # This is the default, but I like to be explicit.
 AUTH_LDAP_ALWAYS_UPDATE_USER = True
@@ -180,3 +183,22 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'api.authentication.TokenAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated'
+    ],
+#    'DEFAULT_PAGINATION_CLASS': "rest_framework.pagination.LimitOffsetPagination",
+#    'PAGE_SIZE': 10
+}
+
+SIMPLE_JWT = {
+    "AUTH_HEADER_TYPES": ["Bearer"],
+    "ACCESS_TOKEN_LIFETIME": datetime.timedelta(seconds=30),
+    "REFRESH_TOKEN_LIFETIME": datetime.timedelta(minutes=1),
+}

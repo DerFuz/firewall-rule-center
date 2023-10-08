@@ -55,7 +55,6 @@ class RuleSerializer(serializers.ModelSerializer):
     created_by = UserPublicSerializer(read_only=True)
     firewalls = FirewallObjectSerializer(required=False, many=True)
     history = HistoricalRecordSerializer(read_only=True)
-    history_firewalls = HistoricalRecordSerializer(read_only=True)
     # TODO firewall m2m history
     
     class Meta:
