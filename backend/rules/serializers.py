@@ -55,6 +55,7 @@ class RuleSerializer(serializers.ModelSerializer):
     created_by = UserPublicSerializer(read_only=True)
     firewalls = FirewallObjectSerializer(required=False, many=True)
     history = HistoricalRecordSerializer(read_only=True)
+    history_firewalls = HistoricalRecordSerializer(read_only=True)
     # TODO firewall m2m history
     
     class Meta:
@@ -96,6 +97,7 @@ class RuleSerializer(serializers.ModelSerializer):
         return data
     
     def create(self, validated_data):
+        # validates that nested firewall-object exists, but does not create new ones
         firewalls_data = validated_data.pop('firewalls')
         firewall_objs = []
         for firewall_data in firewalls_data:
@@ -103,8 +105,7 @@ class RuleSerializer(serializers.ModelSerializer):
             if res:
                 firewall_objs += FirewallObject.objects.filter(hostname=firewall_data['hostname'])
             else:
-                raise serializers.ValidationError('Firewall does not exist')
+                raise serializers.ValidationError(f'firewall-object for <{firewall_data["hostname"]}> does not exist')
         rule = Rule.objects.create(**validated_data)
-        print(firewall_objs)
         rule.firewalls.set(firewall_objs)
         return rule

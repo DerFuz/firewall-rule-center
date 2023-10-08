@@ -1,8 +1,9 @@
 from rest_framework import generics, views
 from rest_framework.parsers import FileUploadParser
 from rest_framework.response import Response
+from django.db import transaction
 
-import csv, json
+import csv
 
 from .models import Rule
 from .serializers import RuleSerializer
@@ -83,6 +84,8 @@ class RuleImportAPIView(
 
     parser_classes = (FileUploadParser,)
 
+    # atomic transaction to only import rules if no error occurs
+    @transaction.atomic
     def post(self, request, *args, **kwargs):
         data = {
             'created_by': self.request.user,
@@ -93,13 +96,17 @@ class RuleImportAPIView(
         decoded_file = file_obj.read().decode('utf-8').splitlines()
         reader = csv.DictReader(decoded_file)
 
+        data_rows = []
         for row in reader:
             firewalls = [{"hostname": i } for i in row['firewalls'].split(',') ]
             row['firewalls'] = firewalls
-            serializer = RuleSerializer(data=row)
-            if serializer.is_valid():
-                serializer.save(**data)
+            data_rows.append(row)
 
-        return Response(status=204)
+        # create one serializer for all rules
+        serializer = RuleSerializer(data=data_rows, many=True)
+        if serializer.is_valid():
+            serializer.save(**data)
+            return Response(status=204)
+        return Response(status=406)
         
 rule_import_view = RuleImportAPIView.as_view()
