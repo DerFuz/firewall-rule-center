@@ -7,20 +7,15 @@ import csv
 
 from .models import Rule
 from .serializers import RuleSerializer
-from api.mixins import (
-    NWAdminPermissionMixin,
-    AuditorPermissionMixin,
-    UserPermissionMixin
-)
+from api.mixins import RulePermissionMixin
+from api.permissions import RulePermissions
 
 class RuleListCreateAPIView(
-    generics.ListCreateAPIView,
-    NWAdminPermissionMixin,
-    AuditorPermissionMixin,
-    UserPermissionMixin):
+    RulePermissionMixin,
+    generics.ListCreateAPIView):
     queryset = Rule.objects.exclude_deleted()
     serializer_class = RuleSerializer
-
+    
     def perform_create(self, serializer):
         data = {
             'created_by': self.request.user,
@@ -50,10 +45,8 @@ rule_list_create_view = RuleListCreateAPIView.as_view()
 
 
 class RuleDetailAPIView(
-    generics.RetrieveAPIView,
-    NWAdminPermissionMixin,
-    AuditorPermissionMixin,
-    UserPermissionMixin):
+    RulePermissionMixin,
+    generics.RetrieveAPIView):
     queryset = Rule.objects.exclude_deleted()
     serializer_class = RuleSerializer
     lookup_field = "pk"
@@ -62,9 +55,8 @@ rule_detail_view = RuleDetailAPIView.as_view()
 
 
 class RuleUpdateAPIView(
-    generics.UpdateAPIView,
-    NWAdminPermissionMixin,
-    UserPermissionMixin):
+    RulePermissionMixin,
+    generics.UpdateAPIView):
     queryset = Rule.objects.exclude_deleted()
     serializer_class = RuleSerializer
     lookup_field = "pk"
@@ -81,8 +73,8 @@ rule_update_view = RuleUpdateAPIView.as_view()
 
 
 class RuleDestroyAPIView(
-    generics.DestroyAPIView,
-    NWAdminPermissionMixin):
+    RulePermissionMixin,
+    generics.DestroyAPIView):
     queryset = Rule.objects.exclude_deleted()
     serializer_class = RuleSerializer
     lookup_field = "pk"
@@ -94,6 +86,7 @@ rule_delete_view = RuleDestroyAPIView.as_view()
 
 
 class RuleImportAPIView(
+    RulePermissionMixin,
     views.APIView):
 
     parser_classes = (FileUploadParser,)

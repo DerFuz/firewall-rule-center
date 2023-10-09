@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 import datetime
 import ldap
-from django_auth_ldap.config import LDAPSearch, GroupOfNamesType
+from django_auth_ldap.config import LDAPSearch, GroupOfUniqueNamesType
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -62,23 +62,25 @@ MIDDLEWARE = [
     'simple_history.middleware.HistoryRequestMiddleware',
 ]
 
+LDAP_DOMAIN = 'dc=frc,dc=org'
+
 # Baseline configuration.
 AUTH_LDAP_SERVER_URI = 'ldap://127.0.0.1'
-AUTH_LDAP_BIND_DN = 'cn=bind-user,ou=people,dc=frc,dc=org'
+AUTH_LDAP_BIND_DN = f'cn=bind-user,ou=people,{LDAP_DOMAIN}'
 AUTH_LDAP_BIND_PASSWORD = 'bind1234'
 AUTH_LDAP_USER_SEARCH = LDAPSearch(
-    'ou=people,dc=frc,dc=org',
+    f'ou=people,{LDAP_DOMAIN}',
     ldap.SCOPE_SUBTREE,
     '(uid=%(user)s)',
 )
 
 # Set up the basic group parameters.
 AUTH_LDAP_GROUP_SEARCH = LDAPSearch(
-    'ou=groups,dc=frc,dc=org',
+    f'ou=groups,{LDAP_DOMAIN}',
     ldap.SCOPE_SUBTREE,
-    '(objectClass=groupOfNames)',
+    '(objectClass=groupOfUniqueNames)',
 )
-AUTH_LDAP_GROUP_TYPE = GroupOfNamesType(name_attr='cn')
+AUTH_LDAP_GROUP_TYPE = GroupOfUniqueNamesType(name_attr='cn')
 
 # Populate the Django user from the LDAP directory.
 AUTH_LDAP_USER_ATTR_MAP = {
@@ -87,12 +89,17 @@ AUTH_LDAP_USER_ATTR_MAP = {
     'email': 'mail',
 }
 
-#AUTH_LDAP_USER_FLAGS_BY_GROUP = {
-    #'is_active': 'cn=active,ou=django,ou=groups,dc=example,dc=com',
-    #'is_staff': 'cn=nw-admin,ou=groups,dc=frc,dc=org',
+AUTH_LDAP_USER_FLAGS_BY_GROUP = {
+    'is_active': [
+        'cn=nw-admin,ou=groups,dc=frc,dc=org',
+        'cn=normal-users,ou=groups,dc=frc,dc=org',
+        'cn=auditors,ou=groups,dc=frc,dc=org',
+    ],
+    #'is_staff': [
+    #    'cn=nw-admin,ou=groups,dc=frc,dc=org',
+    #],
     #'is_superuser': 'cn=superuser,ou=django,ou=groups,dc=example,dc=com',
-    #'nw-admin': 'cn=nw-admin,ou=groups,dc=frc,dc=org',
-#}
+}
 
 # This is the default, but I like to be explicit.
 AUTH_LDAP_ALWAYS_UPDATE_USER = True
@@ -161,6 +168,13 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+
+#LOGGING = {
+#    "version": 1,
+#    "disable_existing_loggers": False,
+#    "handlers": {"console": {"class": "logging.StreamHandler"}},
+#    "loggers": {"django_auth_ldap": {"level": "DEBUG", "handlers": ["console"]}},
+#}
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
