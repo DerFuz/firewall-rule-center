@@ -93,18 +93,22 @@ class RuleSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('at least one source input is required')
         if not data.get('destination_ip_orig') and not data.get('destination_ip_nat'):
             raise serializers.ValidationError('at least one destination input is required')
+        # validates that nested firewall-object exists, but does not create new ones
+        firewalls_data = data.pop('firewalls')
+        firewall_objs = []
+        for firewall in firewalls_data:
+            res = FirewallObject.objects.filter(hostname=firewall['hostname'])
+            if not res:
+                raise serializers.ValidationError(f'firewall-object for <{firewall["hostname"]}> does not exist')
+            else:
+                # append firewallobject, not firewallobjectqueryset
+                firewall_objs.append(res[0])
+        
+        data.update({'firewalls': firewall_objs})   
         return data
     
     def create(self, validated_data):
-        # validates that nested firewall-object exists, but does not create new ones
         firewalls_data = validated_data.pop('firewalls')
-        firewall_objs = []
-        for firewall_data in firewalls_data:
-            res = FirewallObject.objects.filter(hostname=firewall_data['hostname'])
-            if res:
-                firewall_objs += FirewallObject.objects.filter(hostname=firewall_data['hostname'])
-            else:
-                raise serializers.ValidationError(f'firewall-object for <{firewall_data["hostname"]}> does not exist')
         rule = Rule.objects.create(**validated_data)
-        rule.firewalls.set(firewall_objs)
+        rule.firewalls.set(firewalls_data)
         return rule
