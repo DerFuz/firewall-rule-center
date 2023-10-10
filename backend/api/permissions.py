@@ -1,5 +1,5 @@
 from rest_framework import permissions
-from django_auth_ldap.backend import LDAPBackend
+#from django_auth_ldap.backend import LDAPBackend
 
 class RulePermissions(permissions.DjangoModelPermissions):
     perms_map = {
@@ -12,9 +12,10 @@ class RulePermissions(permissions.DjangoModelPermissions):
         'DELETE': ['%(app_label)s.delete_%(model_name)s'],
     }
     
-    def has_permission(self, request, view):
-        user = request.user
-        ldap_user = LDAPBackend().populate_user(username=user.username)
-        print(f'LDAP-Perm: {LDAPBackend().get_all_permissions(ldap_user)}')
-        print(f'Permissions: {user.get_all_permissions()}')
-        return super().has_permission(request, view)
+    # for permission debugging purpose
+    # def has_permission(self, request, view):
+    #     user = request.user
+    #     ldap_user = LDAPBackend().populate_user(username=user.username)
+    #     print(f'LDAP-Perm: {LDAPBackend().get_all_permissions(ldap_user)}')
+    #     print(f'Permissions: {user.get_all_permissions()}')
+    #     return super().has_permission(request, view)

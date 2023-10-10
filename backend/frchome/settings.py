@@ -107,6 +107,9 @@ AUTH_LDAP_ALWAYS_UPDATE_USER = True
 # Use LDAP group membership to calculate group permissions.
 AUTH_LDAP_FIND_GROUP_PERMS = True
 
+# If True, LDAPBackend will be able furnish permissions for any Django user, regardless of which backend authenticated it.
+AUTH_LDAP_AUTHORIZE_ALL_USERS = True
+
 # Cache distinguished names and group memberships for an hour to minimize
 # LDAP traffic.
 AUTH_LDAP_CACHE_TIMEOUT = 3600
