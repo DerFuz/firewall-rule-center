@@ -112,3 +112,9 @@ class RuleSerializer(serializers.ModelSerializer):
         rule = Rule.objects.create(**validated_data)
         rule.firewalls.set(firewalls_data)
         return rule
+    
+    def update(self, instance, validated_data):
+        firewalls_data = validated_data.pop('firewalls')
+        super().update(instance, validated_data)
+        instance.firewalls.set(firewalls_data)
+        return instance
