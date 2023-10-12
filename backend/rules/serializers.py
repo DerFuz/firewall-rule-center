@@ -89,32 +89,40 @@ class RuleSerializer(serializers.ModelSerializer):
         ]
 
     def validate(self, data):
-        if not data.get('source_ip_orig') and not data.get('source_ip_nat'):
-            raise serializers.ValidationError('at least one source input is required')
-        if not data.get('destination_ip_orig') and not data.get('destination_ip_nat'):
-            raise serializers.ValidationError('at least one destination input is required')
-        # validates that nested firewall-object exists, but does not create new ones
-        firewalls_data = data.pop('firewalls')
+        # PATCH requests do not require any ip-field
+        if self.context.get('request').method != 'PATCH':
+            if not data.get('source_ip_orig') and not data.get('source_ip_nat'):
+                raise serializers.ValidationError('at least one source input is required')
+            if not data.get('destination_ip_orig') and not data.get('destination_ip_nat'):
+                raise serializers.ValidationError('at least one destination input is required')
+        return data
+    
+    def validate_firewalls(self, data):
+        # validates if nested firewall-object exists, but does not create new ones
         firewall_objs = []
-        for firewall in firewalls_data:
+        for firewall in data:
             res = FirewallObject.objects.filter(hostname=firewall['hostname'])
             if not res:
                 raise serializers.ValidationError(f'firewall-object for <{firewall["hostname"]}> does not exist')
             else:
                 # append firewallobject, not firewallobjectqueryset
                 firewall_objs.append(res[0])
-        
-        data.update({'firewalls': firewall_objs})   
-        return data
+        return firewall_objs
     
     def create(self, validated_data):
-        firewalls_data = validated_data.pop('firewalls')
-        rule = Rule.objects.create(**validated_data)
-        rule.firewalls.set(firewalls_data)
+        try:
+            firewalls_data = validated_data.pop('firewalls')
+            rule = Rule.objects.create(**validated_data)
+            rule.firewalls.set(firewalls_data)
+        except KeyError:
+            rule = Rule.objects.create(**validated_data)
         return rule
     
     def update(self, instance, validated_data):
-        firewalls_data = validated_data.pop('firewalls')
-        super().update(instance, validated_data)
-        instance.firewalls.set(firewalls_data)
+        try:
+            firewalls_data = validated_data.pop('firewalls')
+            super().update(instance, validated_data)
+            instance.firewalls.set(firewalls_data)
+        except KeyError:
+            super().update(instance, validated_data)
         return instance
