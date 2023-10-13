@@ -8,5 +8,6 @@ urlpatterns = [
     path('<int:pk>/delete/', views.rule_delete_view, name='rule-delete'),
     path('<int:pk>/', views.rule_detail_view, name='rule-detail'),
     path('requests/', include('rulesetrequests.urls')),
-    re_path(r'^import/(?P<filename>[^/]+)$', views.rule_import_view, name='rule-import'),
+    #re_path(r'^import/(?P<filename>[^/]+)$', views.rule_import_view, name='rule-import'),
+    path('import/', views.rule_import_view, name='rule-import'),
 ]

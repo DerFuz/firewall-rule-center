@@ -1,4 +1,4 @@
-from rest_framework import generics, views
+from rest_framework import generics, status
 from rest_framework.parsers import FileUploadParser
 from rest_framework.response import Response
 from django.db import transaction
@@ -8,7 +8,6 @@ import csv
 from .models import Rule
 from .serializers import RuleSerializer
 from api.mixins import RulePermissionMixin
-from api.permissions import RulePermissions
 
 class RuleListCreateAPIView(
     RulePermissionMixin,
@@ -87,10 +86,13 @@ rule_delete_view = RuleDestroyAPIView.as_view()
 
 class RuleImportAPIView(
     RulePermissionMixin,
-    views.APIView):
-
-    parser_classes = (FileUploadParser,)
-
+    generics.GenericAPIView):
+    queryset = Rule.objects.none()
+    serializer_class = RuleSerializer
+    http_method_names = ['post', 'options']
+    parser_classes = [FileUploadParser]
+    
+   
     # atomic transaction to only import rules if no error occurs
     @transaction.atomic
     def post(self, request, *args, **kwargs):
@@ -98,22 +100,31 @@ class RuleImportAPIView(
             'created_by': self.request.user,
             'last_updated_by': self.request.user
         }
-
-        file_obj = request.data['file']
-        decoded_file = file_obj.read().decode('utf-8').splitlines()
-        reader = csv.DictReader(decoded_file)
-
-        data_rows = []
-        for row in reader:
-            firewalls = [{"hostname": i } for i in row['firewalls'].split(',') ]
-            row['firewalls'] = firewalls
-            data_rows.append(row)
-
-        # create one serializer for all rules
-        serializer = RuleSerializer(data=data_rows, many=True)
-        if serializer.is_valid():
-            serializer.save(**data)
-            return Response(status=204)
-        return Response(status=406)
+        
+        # TODO better error handling
+        
+        # Request must include following header:
+        # 'Content-Disposition: attachment; filename=<filename>'
+        try:
+            file_obj = request.data.get('file')
+            decoded_file = file_obj.read().decode('utf-8').splitlines()
+            reader = csv.DictReader(decoded_file)
+            
+            data_rows = []
+            for row in reader:
+                firewalls = [{"hostname": i } for i in row['firewalls'].split(',') if i != '']
+                row['firewalls'] = firewalls
+                row = {k : v for k, v in row.items() if v != ''}
+                data_rows.append(row)
+            
+            # create one serializer for all rules
+            serializer = RuleSerializer(context=self.get_serializer_context(), data=data_rows, many=True)
+            if serializer.is_valid():
+                serializer.save(**data)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            errors = {f"Line {i} errors": errors for i, errors in enumerate(serializer.errors, 1) if len(errors) > 0}
+            return Response([errors], status=status.HTTP_406_NOT_ACCEPTABLE)
+        except (KeyError, AttributeError):
+            return Response("Error reading file", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
 rule_import_view = RuleImportAPIView.as_view()
