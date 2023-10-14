@@ -1,9 +1,9 @@
 from rest_framework import serializers
+from django.contrib.auth import get_user_model, models
 
 from .models import RuleSetRequest
 from rules.serializers import RuleInlineSerializer
 from api.serializers import UserPublicSerializer, HistoricalRecordSerializer
-
 
 class RuleSetRequestSerializer(serializers.ModelSerializer):
     detail_url = serializers.HyperlinkedIdentityField(
@@ -38,3 +38,15 @@ class RuleSetRequestSerializer(serializers.ModelSerializer):
             #'edit_url',
             'history',
         ]
+    
+    def validate_approver(self, data):
+        # validates if nested approver-object exists, but does not create new ones
+        try:
+            approver_id = data.get('id')
+            try:
+                approver_obj = get_user_model().objects.get(id=approver_id)
+                return approver_obj
+            except models.User.DoesNotExist:
+                raise serializers.ValidationError(f'Approver with id {approver_id} does not exist')
+        except KeyError:
+            return None
