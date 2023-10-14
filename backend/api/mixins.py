@@ -1,6 +1,7 @@
-from rest_framework import permissions
-
-from .permissions import RulePermissions
+from .permissions import RulePermissions, RuleSetRequestPermissions
 
 class RulePermissionMixin():
     permission_classes = [RulePermissions]
+    
+class RuleSetRequestPermissionMixin():
+    permission_classes = [RuleSetRequestPermissions]

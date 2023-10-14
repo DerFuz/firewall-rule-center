@@ -2,8 +2,10 @@ from rest_framework import generics
 
 from .models import RuleSetRequest
 from .serializers import RuleSetRequestSerializer
+from api.mixins import RuleSetRequestPermissionMixin
 
 class RuleSetRequestListCreateAPIView(
+    RuleSetRequestPermissionMixin,
     generics.ListCreateAPIView):
     queryset = RuleSetRequest.objects
     serializer_class = RuleSetRequestSerializer
@@ -20,6 +22,7 @@ rulesetrequest_list_create_view = RuleSetRequestListCreateAPIView.as_view()
 
 
 class RuleSetRequestDetailAPIView(
+    RuleSetRequestPermissionMixin,
     generics.RetrieveAPIView):
     queryset = RuleSetRequest.objects
     serializer_class = RuleSetRequestSerializer
