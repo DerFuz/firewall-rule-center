@@ -17,7 +17,6 @@ class RuleSetRequestListCreateAPIView(
         }
         serializer.save(**data)
 
-
 rulesetrequest_list_create_view = RuleSetRequestListCreateAPIView.as_view()
 
 
