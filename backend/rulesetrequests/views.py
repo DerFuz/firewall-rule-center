@@ -31,16 +31,17 @@ class RuleSetRequestDetailAPIView(
 rulesetrequest_detail_view = RuleSetRequestDetailAPIView.as_view()
 
 
-class RuleSetRequestUpdateAPIView(
-    generics.UpdateAPIView):
-    queryset = RuleSetRequest.objects
-    serializer_class = RuleSetRequestSerializer
-    lookup_field = "pk"
+# class RuleSetRequestUpdateAPIView(
+#     RuleSetRequestPermissionMixin,
+#     generics.UpdateAPIView):
+#     queryset = RuleSetRequest.objects
+#     serializer_class = RuleSetRequestSerializer
+#     lookup_field = "pk"
 
-    def perform_update(self, serializer):
-        data = {
-            'last_updated_by': self.request.user
-        }
-        instance = serializer.save(**data)
+#     def perform_update(self, serializer):
+#         data = {
+#             'last_updated_by': self.request.user
+#         }
+#         instance = serializer.save(**data)
 
-rulesetrequest_update_view = RuleSetRequestUpdateAPIView.as_view()
+# rulesetrequest_update_view = RuleSetRequestUpdateAPIView.as_view()
