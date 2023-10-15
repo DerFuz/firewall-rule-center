@@ -1,0 +1,6 @@
+{
+    "remote.WSL.useShellEnvironment": true,
+    "terminal.integrated.env.linux": {
+        "DJANGO_SETTINGS_MODULE": "frchome.settings_dev"
+    }
+}
