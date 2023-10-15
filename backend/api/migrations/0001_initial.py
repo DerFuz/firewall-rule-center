@@ -4,16 +4,16 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-    
-    initial = True
-
+       
     dependencies = [
+        ('contenttypes', '__latest__'),
+        ('rules', '0001_initial'),
     ]
     
     def create_groups(apps, schema_migration):
         Group = apps.get_model('auth', 'Group')
         Permission = apps.get_model('auth', 'Permission')
-
+             
         view_permission = Permission.objects.get(codename='view_permission')
         view_group = Permission.objects.get(codename='view_group')
         view_user = Permission.objects.get(codename='view_user')
