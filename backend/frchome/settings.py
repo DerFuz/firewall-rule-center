@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 import datetime
 import ldap
+import os
 from django_auth_ldap.config import LDAPSearch, GroupOfUniqueNamesType
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -65,9 +66,17 @@ MIDDLEWARE = [
 LDAP_DOMAIN = 'dc=frc,dc=org'
 
 # Baseline configuration.
-AUTH_LDAP_SERVER_URI = 'ldap://127.0.0.1'
+AUTH_LDAP_SERVER_URI = 'ldaps://127.0.0.1:636'
+
+LDAP_CA_FILE_PATH = str(BASE_DIR.parent) + os.sep + "frc_root_ca.crt"
+AUTH_LDAP_CONNECTION_OPTIONS = {
+    ldap.OPT_X_TLS_CACERTFILE: LDAP_CA_FILE_PATH,
+    ldap.OPT_X_TLS_REQUIRE_CERT: ldap.OPT_X_TLS_ALLOW,
+    ldap.OPT_X_TLS_NEWCTX: 0
+}
+
 AUTH_LDAP_BIND_DN = f'cn=bind-user,ou=people,{LDAP_DOMAIN}'
-AUTH_LDAP_BIND_PASSWORD = 'bind1234'
+AUTH_LDAP_BIND_PASSWORD = 'bind-user123!'
 AUTH_LDAP_USER_SEARCH = LDAPSearch(
     f'ou=people,{LDAP_DOMAIN}',
     ldap.SCOPE_SUBTREE,
@@ -92,8 +101,8 @@ AUTH_LDAP_USER_ATTR_MAP = {
 AUTH_LDAP_USER_FLAGS_BY_GROUP = {
     'is_active': [
         'cn=nw-admin,ou=groups,dc=frc,dc=org',
-        'cn=normal-users,ou=groups,dc=frc,dc=org',
-        'cn=auditors,ou=groups,dc=frc,dc=org',
+        'cn=normal-user,ou=groups,dc=frc,dc=org',
+        'cn=auditor,ou=groups,dc=frc,dc=org',
     ],
     #'is_staff': [
     #    'cn=nw-admin,ou=groups,dc=frc,dc=org',
@@ -172,12 +181,12 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-#LOGGING = {
-#    "version": 1,
-#    "disable_existing_loggers": False,
-#    "handlers": {"console": {"class": "logging.StreamHandler"}},
-#    "loggers": {"django_auth_ldap": {"level": "DEBUG", "handlers": ["console"]}},
-#}
+LOGGING = {
+   "version": 1,
+   "disable_existing_loggers": False,
+   "handlers": {"console": {"class": "logging.StreamHandler"}},
+   "loggers": {"django_auth_ldap": {"level": "WARNING", "handlers": ["console"]}},
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/

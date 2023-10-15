@@ -1,0 +1,87 @@
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+            8c:f6:f0:ce:95:14:2c:5e:03:e6:3e:9c:04:bd:4d:2b
+        Signature Algorithm: sha256WithRSAEncryption
+        Issuer: CN=FRC Root CA
+        Validity
+            Not Before: Oct 14 22:08:54 2023 GMT
+            Not After : Jan 16 22:08:54 2026 GMT
+        Subject: CN=ldap.frc.org
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                RSA Public-Key: (2048 bit)
+                Modulus:
+                    00:92:1d:42:6c:bd:e1:e5:62:af:61:de:92:05:78:
+                    c0:80:66:ce:0b:3d:91:10:c3:c5:5c:ae:d7:9c:46:
+                    ec:48:32:3f:ad:bd:9b:39:58:52:44:99:d4:65:ad:
+                    f9:3a:3d:72:54:65:3c:e3:52:a7:4f:c2:b7:e4:db:
+                    3e:9c:20:9a:4b:a8:36:04:e5:db:c5:cd:ba:81:43:
+                    db:41:e5:f7:f0:f0:b1:bf:28:fd:c3:91:ba:f5:06:
+                    7d:0a:cb:83:80:e7:65:c3:ce:7b:fa:a4:05:21:72:
+                    3a:45:74:54:45:08:33:0b:82:f9:2c:b9:0f:8f:50:
+                    5f:35:1f:d1:3e:35:fd:2e:19:bd:e2:3f:d7:5e:0d:
+                    e6:c4:ee:fe:63:58:fa:0e:eb:65:cc:74:c4:b9:70:
+                    5a:1e:3d:87:ea:dc:27:92:6d:b9:83:68:c8:b7:14:
+                    04:d4:b2:0e:3c:30:4c:fe:29:2d:b1:11:ae:5d:82:
+                    a0:eb:92:9b:06:dd:04:e7:90:47:c2:f5:e6:a3:bb:
+                    7c:23:56:d8:49:94:ea:8e:52:60:f0:c7:2f:6f:32:
+                    9a:aa:01:16:50:83:4b:90:9f:91:d0:f0:1d:d9:12:
+                    9a:7b:0f:a7:2f:50:61:f0:98:7c:7c:81:15:bf:c2:
+                    27:44:7c:d7:70:67:04:7d:5a:dc:df:e2:c4:08:2e:
+                    52:f5
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Basic Constraints: 
+                CA:FALSE
+            X509v3 Subject Key Identifier: 
+                CF:D8:86:C4:98:80:64:CF:21:03:18:24:A1:5F:40:3B:76:85:8F:52
+            X509v3 Authority Key Identifier: 
+                keyid:EC:FE:65:82:D0:B8:D5:01:1E:A8:F6:E7:41:77:75:3B:BD:0F:55:66
+                DirName:/CN=FRC Root CA
+                serial:31:C5:40:52:85:F0:8B:CA:62:F4:B7:3C:DC:DD:71:A7:FB:B1:1B:92
+
+            X509v3 Extended Key Usage: 
+                TLS Web Server Authentication, TLS Web Client Authentication
+            X509v3 Key Usage: 
+                Digital Signature, Key Encipherment
+            X509v3 Subject Alternative Name: 
+                DNS:ldap.frc.org
+    Signature Algorithm: sha256WithRSAEncryption
+         81:99:1d:13:42:1d:94:a5:84:94:55:90:c7:42:4f:5c:59:23:
+         82:e3:1f:45:2c:63:6a:57:7c:74:b5:d7:8c:fe:85:c5:83:8e:
+         f9:2c:d8:18:c5:1e:19:82:1b:63:29:d1:e1:6a:31:7e:f7:45:
+         f9:73:10:40:f9:ff:7b:78:c4:77:7b:2f:30:df:95:3b:80:16:
+         5d:42:b8:fa:a4:94:cb:da:a7:71:ba:3c:fb:c3:24:90:3f:24:
+         6b:64:40:a1:76:2b:31:9e:bc:5c:ec:94:b1:96:dc:6d:a2:53:
+         30:1b:90:76:dd:10:f9:68:07:0b:f8:df:2d:d6:4c:81:77:16:
+         0e:59:53:93:94:62:49:f8:1b:14:66:14:c1:c0:03:04:3f:c7:
+         b6:84:8f:a9:95:00:4b:e5:fc:d1:3a:08:44:62:a9:7d:70:e7:
+         2a:ed:87:61:db:28:58:b2:e8:0f:d9:9e:02:85:32:a9:c2:15:
+         9d:22:d5:3c:8a:ac:79:9b:4c:6a:33:6d:20:69:c3:26:b2:6f:
+         cd:08:be:14:66:97:24:b1:a0:8f:e9:83:f7:bb:c6:cb:82:07:
+         bf:0e:bc:de:81:56:8e:a6:78:05:65:d9:a4:00:59:cd:11:84:
+         6b:70:3a:39:61:4a:ec:72:5b:77:c6:7f:57:6e:0f:dd:6f:ec:
+         3c:d5:d1:35
+-----BEGIN CERTIFICATE-----
+MIIDfjCCAmagAwIBAgIRAIz28M6VFCxeA+Y+nAS9TSswDQYJKoZIhvcNAQELBQAw
+FjEUMBIGA1UEAwwLRlJDIFJvb3QgQ0EwHhcNMjMxMDE0MjIwODU0WhcNMjYwMTE2
+MjIwODU0WjAXMRUwEwYDVQQDDAxsZGFwLmZyYy5vcmcwggEiMA0GCSqGSIb3DQEB
+AQUAA4IBDwAwggEKAoIBAQCSHUJsveHlYq9h3pIFeMCAZs4LPZEQw8VcrtecRuxI
+Mj+tvZs5WFJEmdRlrfk6PXJUZTzjUqdPwrfk2z6cIJpLqDYE5dvFzbqBQ9tB5ffw
+8LG/KP3Dkbr1Bn0Ky4OA52XDznv6pAUhcjpFdFRFCDMLgvksuQ+PUF81H9E+Nf0u
+Gb3iP9deDebE7v5jWPoO62XMdMS5cFoePYfq3CeSbbmDaMi3FATUsg48MEz+KS2x
+Ea5dgqDrkpsG3QTnkEfC9eaju3wjVthJlOqOUmDwxy9vMpqqARZQg0uQn5HQ8B3Z
+Epp7D6cvUGHwmHx8gRW/widEfNdwZwR9Wtzf4sQILlL1AgMBAAGjgcUwgcIwCQYD
+VR0TBAIwADAdBgNVHQ4EFgQUz9iGxJiAZM8hAxgkoV9AO3aFj1IwUQYDVR0jBEow
+SIAU7P5lgtC41QEeqPbnQXd1O70PVWahGqQYMBYxFDASBgNVBAMMC0ZSQyBSb290
+IENBghQxxUBShfCLymL0tzzc3XGn+7EbkjAdBgNVHSUEFjAUBggrBgEFBQcDAQYI
+KwYBBQUHAwIwCwYDVR0PBAQDAgWgMBcGA1UdEQQQMA6CDGxkYXAuZnJjLm9yZzAN
+BgkqhkiG9w0BAQsFAAOCAQEAgZkdE0IdlKWElFWQx0JPXFkjguMfRSxjald8dLXX
+jP6FxYOO+SzYGMUeGYIbYynR4WoxfvdF+XMQQPn/e3jEd3svMN+VO4AWXUK4+qSU
+y9qncbo8+8MkkD8ka2RAoXYrMZ68XOyUsZbcbaJTMBuQdt0Q+WgHC/jfLdZMgXcW
+DllTk5RiSfgbFGYUwcADBD/HtoSPqZUAS+X80ToIRGKpfXDnKu2HYdsoWLLoD9me
+AoUyqcIVnSLVPIqseZtMajNtIGnDJrJvzQi+FGaXJLGgj+mD97vGy4IHvw683oFW
+jqZ4BWXZpABZzRGEa3A6OWFK7HJbd8Z/V24P3W/sPNXRNQ==
+-----END CERTIFICATE-----
