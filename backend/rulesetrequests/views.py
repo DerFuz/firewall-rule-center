@@ -2,7 +2,7 @@ from rest_framework import generics, status
 from rest_framework.response import Response
 
 from .models import RuleSetRequest
-from .serializers import RuleSetRequestSerializer, RuleSetRequestStatusSerializer
+from .serializers import RuleSetRequestSerializer
 from api.mixins import RuleSetRequestPermissionMixin
 
 class RuleSetRequestListCreateAPIView(
@@ -30,30 +30,32 @@ class RuleSetRequestDetailAPIView(
 
 rulesetrequest_detail_view = RuleSetRequestDetailAPIView.as_view()
 
-class RuleSetRequestStatusUpdateAPIView(
+class RuleSetRequestApprovalAPIView(
     RuleSetRequestPermissionMixin,
     generics.RetrieveAPIView):
     queryset = RuleSetRequest.objects
-    serializer_class = RuleSetRequestStatusSerializer
+    serializer_class = RuleSetRequestSerializer
     lookup_field = "pk"
     
     def get(self, request, *args, **kwargs):
         instance = self.get_object()
-        # print(type(instance.approver))
-        # print(type(request.user))
-        # print(f'Instance-Approver: {instance.approver.id}, Request-User: {request.user.id}')
+        if instance.status != 'REQ':
+            return Response(f'Current status ({instance.status}) can\'t be changed', status=status.HTTP_400_BAD_REQUEST)
         if instance.approver != request.user:
-            return Response("You are not the defined approver", status=status.HTTP_401_UNAUTHORIZED)
+            return Response('You are not the defined approver', status=status.HTTP_401_UNAUTHORIZED)
         
         path = request.get_full_path()
         if path.endswith('/approve/'):
-            print('APR')
+            instance.status = 'APR'
         elif path.endswith('/refuse/'):
-            print('REF')
+            instance.status = 'REF'
+        else:
+            return Response('Not a valid request', status=status.HTTP_400_BAD_REQUEST)
+        instance.save()
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
 
-rulesetrequest_status_update_view = RuleSetRequestStatusUpdateAPIView.as_view()
+rulesetrequest_approval_view = RuleSetRequestApprovalAPIView.as_view()
 
 
 class RuleSetRequestUpdateAPIView(
