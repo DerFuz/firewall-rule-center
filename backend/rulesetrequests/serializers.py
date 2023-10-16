@@ -16,6 +16,16 @@ class RuleSetRequestSerializer(serializers.ModelSerializer):
     #     lookup_field='pk',
     #     read_only = True
     #     )
+    approve_url = serializers.HyperlinkedIdentityField(
+        view_name='rulesetrequest-approve',
+        lookup_field='pk',
+        read_only = True
+        )
+    refuse_url = serializers.HyperlinkedIdentityField(
+        view_name='rulesetrequest-refuse',
+        lookup_field='pk',
+        read_only = True
+        )
     related_rules = RuleInlineSerializer(source='rule_rule_set_request.all', read_only=True, many=True)
     approver = UserPublicSerializer()
     last_updated_by = UserPublicSerializer(read_only=True)
@@ -36,6 +46,8 @@ class RuleSetRequestSerializer(serializers.ModelSerializer):
             'last_updated_by',
             'detail_url',
             #'edit_url',
+            'approve_url',
+            'refuse_url',
             'history',
         ]
     
@@ -50,3 +62,13 @@ class RuleSetRequestSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(f'Approver with id {approver_id} does not exist')
         except KeyError:
             return None
+        
+class RuleSetRequestStatusSerializer(RuleSetRequestSerializer):
+    approver = UserPublicSerializer(read_only=True)
+    
+    def validate_status(self, data):
+        if data not in ('REF', 'APR'):
+            raise serializers.ValidationError(f'{data} is not a valid approval-status')
+    
+    def validate_approver(self, data):
+        print(f'APPROVER: {data}')
