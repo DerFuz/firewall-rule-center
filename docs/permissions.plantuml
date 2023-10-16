@@ -1,0 +1,81 @@
+@startuml
+left to right direction
+
+skinparam actorStyle awesome
+
+actor "NW-Admin" as nwadmin
+actor "Normal-User" as user
+actor "Auditor" as auditor
+
+package Auth {
+  usecase "View Permission" as view_permission
+  usecase "View Group" as view_group
+  usecase "View User" as view_user
+}
+
+package Histories {
+  usecase "View FirewallObject-History" as view_historicalfirewallobject
+  usecase "View Rule-History" as view_historicalrule
+  usecase "View Rule-Firewalls-History" as view_historicalrule_firewalls
+  usecase "View RuleSetRequest-History" as view_historicalrulesetrequest
+}
+
+package FirewallObject {
+  usecase "Add FirewallObject" as add_firewallobject
+  usecase "Change FirewallObject" as change_firewallobject
+  usecase "Delete FirewallObject" as delete_firewallobject
+  usecase "View FirewallObject" as view_firewallobject
+}
+
+package Rule {
+  usecase "Add Rule" as add_rule
+  usecase "Change Rule" as change_rule
+  usecase "Delete Rule" as delete_rule
+  usecase "View Rule" as view_rule
+}
+
+package RuleSetRequest {
+  usecase "Add RuleSetRequest" as add_rulesetrequest
+  usecase "Change RuleSetRequest" as change_rulesetrequest
+  usecase "Delete RuleSetRequest" as delete_rulesetrequest
+  usecase "View RuleSetRequest" as view_rulesetrequest
+}
+
+nwadmin --> view_permission
+nwadmin --> view_group
+nwadmin --> view_user
+nwadmin --> view_historicalfirewallobject
+nwadmin --> view_historicalrule
+nwadmin --> view_historicalrule_firewalls
+nwadmin --> view_historicalrulesetrequest
+nwadmin --> add_firewallobject
+nwadmin --> change_firewallobject
+nwadmin --> delete_firewallobject
+nwadmin --> view_firewallobject
+nwadmin --> add_rule
+nwadmin --> change_rule
+nwadmin --> delete_rule
+nwadmin --> view_rule
+nwadmin --> add_rulesetrequest
+nwadmin --> change_rulesetrequest
+nwadmin --> delete_rulesetrequest
+nwadmin --> view_rulesetrequest
+
+auditor --> view_firewallobject
+auditor --> view_historicalrule
+auditor --> view_historicalrule_firewalls
+auditor --> view_rule
+auditor --> view_historicalrulesetrequest
+auditor --> view_rulesetrequest
+
+user --> view_firewallobject
+user --> view_historicalrule
+user --> view_historicalrule_firewalls
+user --> add_rule
+user --> view_rule
+user --> view_historicalrulesetrequest
+user --> add_rulesetrequest
+user --> view_rulesetrequest
+
+
+@enduml
