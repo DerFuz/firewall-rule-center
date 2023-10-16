@@ -62,13 +62,3 @@ class RuleSetRequestSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(f'Approver with id {approver_id} does not exist')
         except KeyError:
             return None
-        
-class RuleSetRequestStatusSerializer(RuleSetRequestSerializer):
-    approver = UserPublicSerializer(read_only=True)
-    
-    def validate_status(self, data):
-        if data not in ('REF', 'APR'):
-            raise serializers.ValidationError(f'{data} is not a valid approval-status')
-    
-    def validate_approver(self, data):
-        print(f'APPROVER: {data}')
