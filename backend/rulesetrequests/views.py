@@ -39,16 +39,16 @@ class RuleSetRequestApprovalAPIView(
     
     def get(self, request, *args, **kwargs):
         instance = self.get_object()
-        if instance.status != 'REQ':
+        if instance.status != RuleSetRequest.REQUESTED:
             return Response(f'Current status ({instance.status}) can\'t be changed', status=status.HTTP_400_BAD_REQUEST)
         if instance.approver != request.user:
             return Response('You are not the defined approver', status=status.HTTP_401_UNAUTHORIZED)
         
         path = request.get_full_path()
         if path.endswith('/approve/'):
-            instance.status = 'APR'
+            instance.status = RuleSetRequest.APPROVED
         elif path.endswith('/refuse/'):
-            instance.status = 'REF'
+            instance.status = RuleSetRequest.REFUSED
         else:
             return Response('Not a valid request', status=status.HTTP_400_BAD_REQUEST)
         instance.save()
