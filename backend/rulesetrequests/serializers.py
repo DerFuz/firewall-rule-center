@@ -11,11 +11,6 @@ class RuleSetRequestSerializer(serializers.ModelSerializer):
         lookup_field='pk',
         read_only = True
         )
-    # edit_url = serializers.HyperlinkedIdentityField(
-    #     view_name='rulesetrequest-edit',
-    #     lookup_field='pk',
-    #     read_only = True
-    #     )
     approve_url = serializers.HyperlinkedIdentityField(
         view_name='rulesetrequest-approve',
         lookup_field='pk',
@@ -46,7 +41,6 @@ class RuleSetRequestSerializer(serializers.ModelSerializer):
             'last_updated_on',
             'last_updated_by',
             'detail_url',
-            #'edit_url',
             'approve_url',
             'refuse_url',
             'history',
