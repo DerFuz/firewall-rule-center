@@ -41,6 +41,9 @@ class RuleQuerySet(models.QuerySet):
     def is_not_deleted(self) -> models.QuerySet:
         return self.filter(is_deleted=False)
     
+    def filter_by_rule_set_request(self, rule_set_request) -> models.QuerySet:
+        return self.filter(rule_set_request=rule_set_request)
+    
     # def search(self, query, user=None) -> models.QuerySet:
     #     lookup = Q(source_ip_orig__icontains = query) | Q(destination_ip_orig__icontains = query)
     #     qs = self.is_not_deleted().filter(lookup)
@@ -53,6 +56,9 @@ class RuleManager(models.Manager):
     
     #def search(self, query, user=None) -> RuleQuerySet:
     #    return self.get_queryset().search(query, user=user)
+    
+    def get_rules_from_rule_set_request(self, rule_set_request) -> RuleQuerySet:
+        return self.get_queryset().filter_by_rule_set_request(rule_set_request)
     
     def exclude_deleted(self) -> RuleQuerySet:
         return self.get_queryset().is_not_deleted()
@@ -171,5 +177,10 @@ requested by [{self.requester}] in status [{self.status}]'
 
     def restore(self, update_user):
         self.is_deleted = False
+        self.last_updated_by = update_user
+        self.save()
+        
+    def set_status(self, status, update_user):
+        self.status = status
         self.last_updated_by = update_user
         self.save()

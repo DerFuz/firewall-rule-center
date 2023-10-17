@@ -2,6 +2,8 @@ from rest_framework import generics, status
 from rest_framework.response import Response
 
 from .models import RuleSetRequest
+from rules.models import Rule
+from rules.serializers import RuleSerializer
 from .serializers import RuleSetRequestSerializer
 from api.mixins import RuleSetRequestPermissionMixin
 
@@ -45,13 +47,22 @@ class RuleSetRequestApprovalAPIView(
         if instance.approver != request.user:
             return Response('You are not the defined approver', status=status.HTTP_401_UNAUTHORIZED)
         
+        rules = Rule.objects.get_rules_from_rule_set_request(instance)
+        rule_status = ''
         path = request.get_full_path()
         if path.endswith('/approve/'):
             instance.status = RuleSetRequest.APPROVED
+            rule_status = Rule.APPROVED
         elif path.endswith('/refuse/'):
             instance.status = RuleSetRequest.REFUSED
+            rule_status = Rule.REFUSED
         else:
             return Response('Not a valid request', status=status.HTTP_400_BAD_REQUEST)
+        for rule in rules:
+            rule.set_status(rule_status, request.user)
+        rule_serializer = RuleSerializer(context=self.get_serializer_context(), data=rules, many=True)
+        if rule_serializer.is_valid():
+            rule_serializer.save()
         instance.save()
         serializer = self.get_serializer(instance)
         return Response(serializer.data)

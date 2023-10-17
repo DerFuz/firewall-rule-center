@@ -51,7 +51,7 @@ class RuleUpdateAPIView(
         # if status changes to configured (CON) and rule_set_request is set
         if instance.status == Rule.CONFIGURED and instance_rule_set_request is not None:
             # get all sibling-rules for this rule_set_request that are not configured (CON)
-            siblings = Rule.objects.filter(rule_set_request=instance_rule_set_request).exclude(id=instance.id).exclude(status=Rule.CONFIGURED)
+            siblings = Rule.objects.get_rules_from_rule_set_request(instance_rule_set_request).exclude(id=instance.id).exclude(status=Rule.CONFIGURED)
             # if none are found => all siblings configured (CON) => set RuleSetRequest to configured (CON)
             if siblings.count() == 0:
                 rule_set_request = RuleSetRequest.objects.filter(id=instance_rule_set_request.id).first()
