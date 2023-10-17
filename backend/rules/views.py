@@ -5,7 +5,7 @@ from django.db import transaction
 
 import csv
 
-from .models import Rule
+from .models import Rule, RuleSetRequest
 from .serializers import RuleSerializer
 from api.mixins import RulePermissionMixin
 
@@ -21,24 +21,6 @@ class RuleListCreateAPIView(
             'last_updated_by': self.request.user
         }
         serializer.save(**data)
-        #serializer.save(user = self.request.user)
-        # email = serializer.validated_data.pop('email')
-        # print(email)
-        # print(serializer.validated_data)
-        #title = serializer.validated_data.get("title")
-        #content = serializer.validated_data.get("content") or None
-        #if content is None:
-        #    content = title
-        #serializer.save(user=self.request.user, content=content)
-
-    # def get_queryset(self, *args, **kwargs):
-    #     qs = super().get_queryset(*args, **kwargs)
-    #     request = self.request
-    #     # not needed really, if we are sure that the user is authenticated, aka StaffEditorPermissionMixin
-    #     user = request.user
-    #     if not user.is_authenticated:
-    #         return Product.objects.none()
-    #     return qs.filter(user=request.user)
 
 rule_list_create_view = RuleListCreateAPIView.as_view()
 
@@ -48,7 +30,7 @@ class RuleDetailAPIView(
     generics.RetrieveAPIView):
     queryset = Rule.objects.exclude_deleted()
     serializer_class = RuleSerializer
-    lookup_field = "pk"
+    lookup_field = 'pk'
 
 rule_detail_view = RuleDetailAPIView.as_view()
 
@@ -58,7 +40,7 @@ class RuleUpdateAPIView(
     generics.UpdateAPIView):
     queryset = Rule.objects.exclude_deleted()
     serializer_class = RuleSerializer
-    lookup_field = "pk"
+    lookup_field = 'pk'
 
     def perform_update(self, serializer):
         data = {
@@ -84,7 +66,7 @@ class RuleDestroyAPIView(
     generics.DestroyAPIView):
     queryset = Rule.objects.exclude_deleted()
     serializer_class = RuleSerializer
-    lookup_field = "pk"
+    lookup_field = 'pk'
 
     def perform_destroy(self, instance):
         instance.soft_deleted(self.request.user)
@@ -120,7 +102,7 @@ class RuleImportAPIView(
             
             data_rows = []
             for row in reader:
-                firewalls = [{"hostname": i } for i in row['firewalls'].split(',') if i != '']
+                firewalls = [{'hostname': i } for i in row['firewalls'].split(',') if i != '']
                 row['firewalls'] = firewalls
                 row = {k : v for k, v in row.items() if v != ''}
                 data_rows.append(row)
@@ -130,9 +112,9 @@ class RuleImportAPIView(
             if serializer.is_valid():
                 serializer.save(**data)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
-            errors = {f"Line {i} errors": errors for i, errors in enumerate(serializer.errors, 1) if len(errors) > 0}
+            errors = {f'Line {i} errors': errors for i, errors in enumerate(serializer.errors, 1) if len(errors) > 0}
             return Response([errors], status=status.HTTP_406_NOT_ACCEPTABLE)
         except (KeyError, AttributeError):
-            return Response("Error reading file", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response('Error reading file', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
 rule_import_view = RuleImportAPIView.as_view()
