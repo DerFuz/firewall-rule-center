@@ -27,6 +27,7 @@ class RuleSetRequestSerializer(serializers.ModelSerializer):
         read_only = True
         )
     related_rules = RuleInlineSerializer(source='rule_rule_set_request.all', read_only=True, many=True)
+    status = serializers.CharField(read_only=True)
     approver = UserPublicSerializer()
     last_updated_by = UserPublicSerializer(read_only=True)
     created_by = UserPublicSerializer(read_only=True)

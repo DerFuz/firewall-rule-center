@@ -16,6 +16,7 @@ class RuleSetRequestListCreateAPIView(
             'created_by': self.request.user,
             'last_updated_by': self.request.user
         }
+        # does not check if status is given - will be overwritten by model default
         serializer.save(**data)
 
 rulesetrequest_list_create_view = RuleSetRequestListCreateAPIView.as_view()
