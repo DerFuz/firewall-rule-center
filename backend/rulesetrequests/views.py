@@ -68,19 +68,3 @@ class RuleSetRequestApprovalAPIView(
         return Response(serializer.data)
 
 rulesetrequest_approval_view = RuleSetRequestApprovalAPIView.as_view()
-
-
-class RuleSetRequestUpdateAPIView(
-    RuleSetRequestPermissionMixin,
-    generics.UpdateAPIView):
-    queryset = RuleSetRequest.objects
-    serializer_class = RuleSetRequestSerializer
-    lookup_field = 'pk'
-
-    def perform_update(self, serializer):
-        data = {
-            'last_updated_by': self.request.user
-        }
-        instance = serializer.save(**data)
-
-rulesetrequest_update_view = RuleSetRequestUpdateAPIView.as_view()
