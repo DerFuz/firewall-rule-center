@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 '''
 
 from pathlib import Path
+import environ
 import datetime
 import ldap
 import os
@@ -19,15 +20,18 @@ from django_auth_ldap.config import LDAPSearch, GroupOfUniqueNamesType
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
+env = environ.Env(
+    DEBUG = (bool, False),
+    LDAP_TLS_REQUIRED = (bool, False)
+)
+env.prefix = 'DJANGO_'
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-%)+w5u7pw7z0c-tmqwmygdv1y^&z9t+sc#u8gl+57+6=w1u1hj'
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = env('DEBUG')
 
 ALLOWED_HOSTS = []
 
@@ -63,32 +67,38 @@ MIDDLEWARE = [
     'simple_history.middleware.HistoryRequestMiddleware',
 ]
 
-LDAP_DOMAIN = 'dc=frc,dc=org'
-
 # Baseline configuration.
-AUTH_LDAP_SERVER_URI = 'ldaps://127.0.0.1:636'
+AUTH_LDAP_SERVER_URI = env('AUTH_LDAP_SERVER_URI')
 
-LDAP_CA_FILE_PATH = f'{str(BASE_DIR.parent)}{os.sep}frc_root_ca.crt'
-AUTH_LDAP_CONNECTION_OPTIONS = {
-    ldap.OPT_X_TLS_CACERTFILE: LDAP_CA_FILE_PATH,
-    ldap.OPT_X_TLS_REQUIRE_CERT: ldap.OPT_X_TLS_ALLOW,
-    ldap.OPT_X_TLS_NEWCTX: 0
-}
+if env('LDAP_TLS_REQUIRED'):
+    LDAP_CA_FILE_PATH = env('LDAP_CA_FILE_PATH')
+    AUTH_LDAP_CONNECTION_OPTIONS = {
+        ldap.OPT_X_TLS_CACERTFILE: LDAP_CA_FILE_PATH,
+        ldap.OPT_X_TLS_REQUIRE_CERT: ldap.OPT_X_TLS_ALLOW,
+        ldap.OPT_X_TLS_NEWCTX: 0
+    }
 
-AUTH_LDAP_BIND_DN = f'cn=bind-user,ou=people,{LDAP_DOMAIN}'
-AUTH_LDAP_BIND_PASSWORD = 'bind-user123!'
+AUTH_LDAP_BIND_DN = env('AUTH_LDAP_BIND_DN')
+AUTH_LDAP_BIND_PASSWORD = env('AUTH_LDAP_BIND_PASSWORD')
+
+# Set up the basic user parameters.
 AUTH_LDAP_USER_SEARCH = LDAPSearch(
-    f'ou=people,{LDAP_DOMAIN}',
-    ldap.SCOPE_SUBTREE,
-    '(uid=%(user)s)',
+    base_dn=env('LDAP_USER_BASE_DN'),
+    # cant load scope from env
+    scope=ldap.SCOPE_SUBTREE,
+    filterstr=env('LDAP_USER_FILTER')
 )
+
 
 # Set up the basic group parameters.
 AUTH_LDAP_GROUP_SEARCH = LDAPSearch(
-    f'ou=groups,{LDAP_DOMAIN}',
-    ldap.SCOPE_SUBTREE,
-    '(objectClass=groupOfUniqueNames)',
+    base_dn=env('LDAP_GROUP_BASE_DN'),
+    # cant load scope from env
+    scope=ldap.SCOPE_SUBTREE,
+    filterstr=env('LDAP_GROUP_FILTER')
 )
+
+# cant load group type from env
 AUTH_LDAP_GROUP_TYPE = GroupOfUniqueNamesType(name_attr='cn')
 
 # Populate the Django user from the LDAP directory.
@@ -98,13 +108,7 @@ AUTH_LDAP_USER_ATTR_MAP = {
     'email': 'mail',
 }
 
-AUTH_LDAP_USER_FLAGS_BY_GROUP = {
-    'is_active': [
-        'cn=nw-admin,ou=groups,dc=frc,dc=org',
-        'cn=normal-user,ou=groups,dc=frc,dc=org',
-        'cn=auditor,ou=groups,dc=frc,dc=org',
-    ]
-}
+AUTH_LDAP_USER_FLAGS_BY_GROUP = env.json('AUTH_LDAP_USER_FLAGS_BY_GROUP')
 
 # This is the default, but I like to be explicit.
 AUTH_LDAP_ALWAYS_UPDATE_USER = True
@@ -157,14 +161,8 @@ WSGI_APPLICATION = 'frchome.wsgi.application'
 #     }
 # }
 
-MYSQL_SECRET_FILE = f'{str(BASE_DIR.parent)}{os.sep}mysql{os.sep}secrets{os.sep}mysql-secrets.cnf'
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'OPTIONS': {
-            'read_default_file': MYSQL_SECRET_FILE
-        }
-    }
+    'default': env.db(),
 }
 
 # Password validation
@@ -190,15 +188,15 @@ LOGGING = {
    'version': 1,
    'disable_existing_loggers': False,
    'handlers': {'console': {'class': 'logging.StreamHandler'}},
-   'loggers': {'django_auth_ldap': {'level': 'WARNING', 'handlers': ['console']}},
+   'loggers': {'django_auth_ldap': {'level': env('LDAP_LOGGING_LEVEL'), 'handlers': ['console']}},
 }
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = env('LANGUAGE_CODE')
 
-TIME_ZONE = 'Europe/Vienna'
+TIME_ZONE = env('TIME_ZONE')
 
 USE_I18N = True
 
