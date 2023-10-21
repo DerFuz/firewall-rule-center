@@ -1,6 +1,7 @@
 django == 4.2.*
 djangorestframework
 djangorestframework-simplejwt
+django-environ
 pyyaml
 requests
 django-cors-headers
