@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'simple_history',
     'drf_spectacular',
+    'corsheaders',
     # custom
     'api',
     'rules',
@@ -58,6 +59,8 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -233,3 +236,7 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': datetime.timedelta(seconds=30),
     'REFRESH_TOKEN_LIFETIME': datetime.timedelta(minutes=1),
 }
+
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',
+]
