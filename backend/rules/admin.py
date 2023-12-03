@@ -1,6 +1,5 @@
 from django.contrib import admin
 
-from .models import Rule, FirewallObject
+from .models import Rule
 
 admin.site.register(Rule)
-admin.site.register(FirewallObject)

@@ -18,6 +18,7 @@ urlpatterns = [
     # Redoc UI:
     path('schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
     path('rules/', include('rules.urls')),
+    path('firewalls/', include('firewalls.urls')),
     path('auth/', obtain_auth_token),
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),

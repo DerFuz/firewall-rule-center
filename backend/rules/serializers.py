@@ -3,7 +3,9 @@ from rest_framework import serializers
 
 from api.serializers import UserPublicSerializer, HistoricalRecordSerializer
 
-from .models import Rule, FirewallObject
+from .models import Rule
+from firewalls.models import FirewallObject
+from firewalls.serializers import FirewallObjectShortSerializer
 from . import validators
 
 
@@ -13,22 +15,6 @@ class RuleInlineSerializer(serializers.Serializer):
         lookup_field='pk',
         read_only = True
         )
-
-
-class FirewallObjectSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = FirewallObject
-        fields = [
-            'hostname'
-        ]
-
-        extra_kwargs = {
-            'hostname': {'validators': []},
-        }
-
-        # TODO ensure uniqueness constraint for creation and update
-        # https://stackoverflow.com/questions/38438167/unique-validation-on-nested-serializer-on-django-rest-framework/
 
     
 class RuleSerializer(serializers.ModelSerializer):
@@ -53,7 +39,7 @@ class RuleSerializer(serializers.ModelSerializer):
     destination_ip_nat = serializers.CharField(required=False, validators=[validators.validate_ip])
     last_updated_by = UserPublicSerializer(read_only=True)
     created_by = UserPublicSerializer(read_only=True)
-    firewalls = FirewallObjectSerializer(required=False, many=True)
+    firewalls = FirewallObjectShortSerializer(required=False, many=True)
     history = HistoricalRecordSerializer(read_only=True)
     # TODO firewall m2m history
     
