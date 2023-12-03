@@ -108,7 +108,7 @@ class Rule(models.Model):
 
 
     # Action
-    action = models.CharField(max_length=3, choices=RULE_ACTION_CHOICES, default=PERMIT)
+    action = models.CharField(max_length=3, choices=RULE_ACTION_CHOICES)
     
     # Protocol
     protocol = models.CharField(max_length=6, choices=RULE_PROTOCOL_CHOICES)
