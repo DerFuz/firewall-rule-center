@@ -33,10 +33,10 @@ class RuleSerializer(serializers.ModelSerializer):
         lookup_field='pk',
         read_only = True
         )
-    source_ip_orig = serializers.CharField(required=False, validators=[validators.validate_ip])
-    source_ip_nat = serializers.CharField(required=False, validators=[validators.validate_ip])
-    destination_ip_orig = serializers.CharField(required=False, validators=[validators.validate_ip])
-    destination_ip_nat = serializers.CharField(required=False, validators=[validators.validate_ip])
+    source_ip_orig = serializers.CharField(required=False, allow_blank=True, validators=[validators.validate_ip])
+    source_ip_nat = serializers.CharField(required=False, allow_blank=True, validators=[validators.validate_ip])
+    destination_ip_orig = serializers.CharField(required=False, allow_blank=True, validators=[validators.validate_ip])
+    destination_ip_nat = serializers.CharField(required=False, allow_blank=True, validators=[validators.validate_ip])
     last_updated_by = UserPublicSerializer(read_only=True)
     created_by = UserPublicSerializer(read_only=True)
     firewalls = FirewallObjectShortSerializer(required=False, many=True)
