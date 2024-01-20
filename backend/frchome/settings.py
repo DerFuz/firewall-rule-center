@@ -249,5 +249,9 @@ SPECTACULAR_SETTINGS = {
     # Split components into request and response parts where appropriate
     # This setting is highly recommended to achieve the most accurate API
     # description, however it comes at the cost of having more components.
-    'COMPONENT_SPLIT_REQUEST': True
+    'COMPONENT_SPLIT_REQUEST': True,
+    'TITLE': 'Firewall Rule Center API',
+    'DESCRIPTION': 'Documents your firewall rules',
+    'VERSION': '1.0.3',
+    'SERVE_INCLUDE_SCHEMA': False,
 }
