@@ -244,3 +244,10 @@ SIMPLE_JWT = {
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
 ]
+
+SPECTACULAR_SETTINGS = {
+    # Split components into request and response parts where appropriate
+    # This setting is highly recommended to achieve the most accurate API
+    # description, however it comes at the cost of having more components.
+    'COMPONENT_SPLIT_REQUEST': True
+}
