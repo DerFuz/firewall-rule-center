@@ -2,7 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model, models
 
 from .models import RuleSetRequest
-from rules.serializers import RuleInlineSerializer
+from rules.serializers import RuleSerializer
 from api.serializers import UserPublicSerializer, HistoricalRecordSerializer
 
 class RuleSetRequestSerializer(serializers.ModelSerializer):
@@ -21,7 +21,7 @@ class RuleSetRequestSerializer(serializers.ModelSerializer):
         lookup_field='pk',
         read_only = True
         )
-    related_rules = RuleInlineSerializer(source='rule_rule_set_request.all', read_only=True, many=True)
+    related_rules = RuleSerializer(source='rule_rule_set_request.all', read_only=True, many=True)
     status = serializers.CharField(read_only=True)
     approver = UserPublicSerializer()
     last_updated_by = UserPublicSerializer(read_only=True)
