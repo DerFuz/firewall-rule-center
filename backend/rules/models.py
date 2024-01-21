@@ -2,12 +2,10 @@ from django.db import models
 from django.conf import settings
 from django.db.models import Q
 from simple_history.models import HistoricalRecords
+from django.contrib.auth import get_user_model
 
 from rulesetrequests.models import RuleSetRequest
 from firewalls.models import FirewallObject
-
-User = settings.AUTH_USER_MODEL # auth.user
-
 
 class RuleQuerySet(models.QuerySet):
     def is_deleted(self) -> models.QuerySet:
@@ -111,13 +109,13 @@ class Rule(models.Model):
     created_on = models.DateTimeField(auto_now_add=True)
 
     # Creator of this rule entry
-    created_by = models.ForeignKey(User, related_name='rule_created_by', editable=False, on_delete=models.PROTECT)
+    created_by = models.ForeignKey(get_user_model(), related_name='rule_created_by', editable=False, on_delete=models.PROTECT)
 
     # Rule entry update timestamp
     last_updated_on = models.DateTimeField(auto_now=True)
 
     # Last user that updated this rule entry
-    last_updated_by = models.ForeignKey(User, related_name='rule_last_updated_by', editable=False, on_delete=models.PROTECT)
+    last_updated_by = models.ForeignKey(get_user_model(), related_name='rule_last_updated_by', editable=False, on_delete=models.PROTECT)
 
     # Ticket number, etc
     ticket = models.CharField(max_length=20, blank=True)
