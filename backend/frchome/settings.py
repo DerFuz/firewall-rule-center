@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'firewalls',
     'rules',
     'rulesetrequests',
+    'users'
 ]
 
 MIDDLEWARE = [

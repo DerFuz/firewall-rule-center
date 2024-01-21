@@ -2,6 +2,7 @@ from .permissions import (
     RulePermissions, 
     RuleSetRequestPermissions, 
     FirewallPermissions, 
+    UserPermissions
 )
 
 class RulePermissionMixin():
@@ -12,3 +13,6 @@ class RuleSetRequestPermissionMixin():
     
 class FirewallPermissionMixin():
     permission_classes = [FirewallPermissions]
+    
+class UserPermissionMixin():
+    permission_classes = [UserPermissions]
