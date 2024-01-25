@@ -191,10 +191,19 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 LOGGING = {
-   'version': 1,
-   'disable_existing_loggers': False,
-   'handlers': {'console': {'class': 'logging.StreamHandler'}},
-   'loggers': {'django_auth_ldap': {'level': env('LDAP_LOGGING_LEVEL'), 'handlers': ['console']}},
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler'
+        }
+    },
+    'loggers': {
+        'django_auth_ldap': {
+            'level': env.str('LDAP_LOGGING_LEVEL', default='WARNING'),
+            'handlers': ['console']
+        }
+    },
 }
 
 # Internationalization
