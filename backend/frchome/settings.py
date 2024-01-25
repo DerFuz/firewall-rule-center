@@ -76,10 +76,15 @@ MIDDLEWARE = [
 # Baseline configuration.
 AUTH_LDAP_SERVER_URI = env('AUTH_LDAP_SERVER_URI')
 
-if env('LDAP_TLS_REQUIRED'):
-    LDAP_CA_FILE_PATH = env('LDAP_CA_FILE_PATH')
+if env.bool('LDAP_TLS_REQUIRED', default=False):
+    LDAP_CA_FILE_PATH = env.path('LDAP_CA_FILE_PATH')
+    
+    # checks if give path is a valid file
+    if not os.path.isfile(LDAP_CA_FILE_PATH):
+        raise ValueError(f'Path <{LDAP_CA_FILE_PATH}> is not a valid file')
+    
     AUTH_LDAP_CONNECTION_OPTIONS = {
-        ldap.OPT_X_TLS_CACERTFILE: LDAP_CA_FILE_PATH,
+        ldap.OPT_X_TLS_CACERTFILE: str(LDAP_CA_FILE_PATH),
         ldap.OPT_X_TLS_REQUIRE_CERT: ldap.OPT_X_TLS_ALLOW,
         ldap.OPT_X_TLS_NEWCTX: 0
     }
