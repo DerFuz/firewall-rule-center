@@ -235,8 +235,8 @@ REST_FRAMEWORK = {
 
 SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ['Bearer'],
-    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(minutes=5),
-    'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=1),
+    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(minutes=env.int('JWT_ACCESS_TOKEN_LIFETIME_MINS', default=5)),
+    'REFRESH_TOKEN_LIFETIME': datetime.timedelta(hours=env.int('JWT_REFRESH_TOKEN_LIFETIME_HOURS', default=24)),
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
 }
