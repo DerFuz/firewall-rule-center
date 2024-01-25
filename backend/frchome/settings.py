@@ -20,18 +20,15 @@ from django_auth_ldap.config import LDAPSearch, GroupOfUniqueNamesType
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-env = environ.Env(
-    DEBUG = (bool, False),
-    LDAP_TLS_REQUIRED = (bool, False)
-)
+env = environ.Env()
 env.prefix = 'DJANGO_'
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env('SECRET_KEY')
+SECRET_KEY = env.str('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env('DEBUG')
+DEBUG = env.bool('DEBUG', default=False)
 
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default='localhost')
 
@@ -74,7 +71,7 @@ MIDDLEWARE = [
 ]
 
 # Baseline configuration.
-AUTH_LDAP_SERVER_URI = env('AUTH_LDAP_SERVER_URI')
+AUTH_LDAP_SERVER_URI = env.str('AUTH_LDAP_SERVER_URI')
 
 if env.bool('LDAP_TLS_REQUIRED', default=False):
     LDAP_CA_FILE_PATH = env.path('LDAP_CA_FILE_PATH')
@@ -89,27 +86,27 @@ if env.bool('LDAP_TLS_REQUIRED', default=False):
         ldap.OPT_X_TLS_NEWCTX: 0
     }
 
-AUTH_LDAP_BIND_DN = env('AUTH_LDAP_BIND_DN')
-AUTH_LDAP_BIND_PASSWORD = env('AUTH_LDAP_BIND_PASSWORD')
+AUTH_LDAP_BIND_DN = env.str('AUTH_LDAP_BIND_DN')
+AUTH_LDAP_BIND_PASSWORD = env.str('AUTH_LDAP_BIND_PASSWORD')
 
 # Set up the basic user parameters.
 AUTH_LDAP_USER_SEARCH = LDAPSearch(
-    base_dn=env('LDAP_USER_BASE_DN'),
+    base_dn=env.str('LDAP_USER_BASE_DN'),
     # cant load scope from env
     scope=ldap.SCOPE_SUBTREE,
-    filterstr=env('LDAP_USER_FILTER')
+    filterstr=env.str('LDAP_USER_FILTER')
 )
 
 
 # Set up the basic group parameters.
 AUTH_LDAP_GROUP_SEARCH = LDAPSearch(
-    base_dn=env('LDAP_GROUP_BASE_DN'),
-    # cant load scope from env
+    base_dn=env.str('LDAP_GROUP_BASE_DN'),
+    # TODO cant load scope from env
     scope=ldap.SCOPE_SUBTREE,
-    filterstr=env('LDAP_GROUP_FILTER')
+    filterstr=env.str('LDAP_GROUP_FILTER')
 )
 
-# cant load group type from env
+# TODO cant load group type from env
 AUTH_LDAP_GROUP_TYPE = GroupOfUniqueNamesType(name_attr='cn')
 
 # Populate the Django user from the LDAP directory.
@@ -214,9 +211,9 @@ LOGGING = {
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
-LANGUAGE_CODE = env('LANGUAGE_CODE')
+LANGUAGE_CODE = env.str('LANGUAGE_CODE')
 
-TIME_ZONE = env('TIME_ZONE')
+TIME_ZONE = env.str('TIME_ZONE')
 
 USE_I18N = True
 
