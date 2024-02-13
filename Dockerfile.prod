@@ -1,0 +1,73 @@
+# Dockerfile for firewall-rule-center
+
+# Stage to build python-ldap
+FROM python:3.11-bookworm AS ldap-build
+
+ENV PIP_DISABLE_PIP_VERSION_CHECK 1
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+ENV SRC_DIR /usr/src/app
+
+WORKDIR ${SRC_DIR}
+
+RUN pip install --upgrade pip
+
+# dependencies for python-ldap
+RUN apt-get update && apt-get install -y \
+    build-essential python3-dev libldap2-dev \
+    libsasl2-dev slapd ldap-utils tox lcov valgrind && \
+    pip wheel --wheel-dir=${SRC_DIR}/wheels python-ldap
+
+# Stage to build mysqlclient
+FROM ldap-build AS mysqlclient-build
+
+# dependencies for python-ldap
+RUN apt-get update && apt-get install -y \
+    default-libmysqlclient-dev && \
+    pip wheel --wheel-dir=${SRC_DIR}/wheels mysqlclient
+
+
+FROM python:3.11-slim-bookworm
+
+ENV PIP_DISABLE_PIP_VERSION_CHECK 1
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+ENV HOME /home/app
+ENV SRC_DIR /usr/src/app
+ENV APP_HOME ${HOME}/web
+
+RUN mkdir -p ${APP_HOME}
+RUN mkdir ${APP_HOME}/staticfiles
+
+RUN addgroup --system app && adduser --system --group app
+
+WORKDIR ${APP_HOME}
+
+# install runtime libraries for python-ldap and mysqlclient (no prod libraries?)
+RUN apt-get update && apt-get install -y libldap-2.5-0 default-libmysqlclient-dev
+
+# install netcat for entry point
+RUN apt-get update && apt-get install -y netcat-traditional
+
+COPY --from=mysqlclient-build ${SRC_DIR}/wheels /wheels
+RUN pip install --upgrade pip
+RUN pip install --no-cache /wheels/*
+
+# Allows docker to cache installed dependencies between builds
+COPY ./requirements.txt .
+RUN pip install -r requirements.txt
+
+COPY ./django_entrypoint.sh .
+RUN sed -i 's/\r$//g'  ${APP_HOME}/django_entrypoint.sh
+RUN chmod +x  ${APP_HOME}/django_entrypoint.sh
+
+# Mounts the application code to the image
+COPY backend ${APP_HOME}
+
+RUN chown -R app:app ${APP_HOME}
+
+USER app
+
+ENTRYPOINT [ "/home/app/web/django_entrypoint.sh" ]
