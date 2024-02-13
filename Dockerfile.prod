@@ -56,8 +56,8 @@ RUN pip install --upgrade pip
 RUN pip install --no-cache /wheels/*
 
 # Allows docker to cache installed dependencies between builds
-COPY ./requirements.txt .
-RUN pip install -r requirements.txt
+COPY ./requirements.prod.txt .
+RUN pip install -r requirements.prod.txt
 
 COPY ./django_entrypoint.sh .
 RUN sed -i 's/\r$//g'  ${APP_HOME}/django_entrypoint.sh
