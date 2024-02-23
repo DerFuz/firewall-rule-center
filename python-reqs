@@ -1,1 +1,0 @@
-apt-get install build-essential python3.11-dev libldap2-dev libsasl2-dev slapd ldap-utils tox lcov valgrind default-libmysqlclient-dev pkg-config
