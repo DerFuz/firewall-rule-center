@@ -10,7 +10,7 @@ GROUPS = {
 
         #django app model specific permissions
         "firewallobject" : ["add", "delete", "change", "view"],
-        "historicalfirewall object" : ["view"],
+        "historicalfirewallobject" : ["view"],
         "historicalrule" : ["view"],
         "historicalrule_firewalls" : ["view"],
         "rule" : ["add", "delete", "change", "view"],
