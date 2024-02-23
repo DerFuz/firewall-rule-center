@@ -16,7 +16,12 @@ echo 'DB started'
 echo 'Running migrations...'
 python manage.py migrate
 
+echo 'Creating default DRF groups and their permissions...'
+python manage.py create_drf_groups
+
 echo 'Collecting static files...'
 python manage.py collectstatic --no-input
+
+echo 'Create a Django Superuser by executing - docker exec -ti <backend-app-container> python manage.py createsuperuser'
 
 exec "$@"
