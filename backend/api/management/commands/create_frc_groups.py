@@ -47,7 +47,7 @@ GROUPS = {
 
 class Command(BaseCommand):
 
-    help = "Creates default permissions for DRF groups (nw-admin, normal-user, auditor)"
+    help = "Creates default permissions for FRC groups (nw-admin, normal-user, auditor)"
 
     def handle(self, *args, **options):
         
