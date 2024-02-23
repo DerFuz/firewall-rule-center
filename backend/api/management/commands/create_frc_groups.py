@@ -26,9 +26,9 @@ GROUPS = {
         "firewallobject" : ["view"],
         "historicalrule" : ["view"],
         "historicalrule_firewalls" : ["view"],
-        "rule" : ["view"],
+        "rule" : ["add", "view"],
         "historicalrulesetrequest" : ["view"],
-        "rulesetrequest" : ["view"],
+        "rulesetrequest" : ["add", "view"],
     },
     
     "auditor": {
@@ -39,9 +39,9 @@ GROUPS = {
         "firewallobject" : ["view"],
         "historicalrule" : ["view"],
         "historicalrule_firewalls" : ["view"],
-        "rule" : ["add", "view"],
+        "rule" : ["view"],
         "historicalrulesetrequest" : ["view"],
-        "rulesetrequest" : ["add", "view"],
+        "rulesetrequest" : ["view"],
     },
 }
 
