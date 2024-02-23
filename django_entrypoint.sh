@@ -16,8 +16,8 @@ echo 'DB started'
 echo 'Running migrations...'
 python manage.py migrate
 
-echo 'Creating default DRF groups and their permissions...'
-python manage.py create_drf_groups
+echo 'Creating default FRC groups and their permissions...'
+python manage.py create_frc_groups
 
 echo 'Collecting static files...'
 python manage.py collectstatic --no-input
