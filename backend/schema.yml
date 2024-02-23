@@ -1,7 +1,8 @@
 openapi: 3.0.3
 info:
-  title: ''
-  version: 0.0.0
+  title: Firewall Rule Center API
+  version: 1.0.3
+  description: Documents your firewall rules
 paths:
   /api/auth/:
     post:
@@ -12,13 +13,13 @@ paths:
         content:
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/AuthToken'
+              $ref: '#/components/schemas/AuthTokenRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/AuthToken'
+              $ref: '#/components/schemas/AuthTokenRequest'
           application/json:
             schema:
-              $ref: '#/components/schemas/AuthToken'
+              $ref: '#/components/schemas/AuthTokenRequest'
         required: true
       security:
       - jwtAuth: []
@@ -30,6 +31,47 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AuthToken'
+          description: ''
+  /api/firewalls/:
+    get:
+      operationId: firewalls_list
+      tags:
+      - firewalls
+      security:
+      - jwtAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FirewallObject'
+          description: ''
+  /api/firewalls/{hostname}/:
+    get:
+      operationId: firewalls_retrieve
+      parameters:
+      - in: path
+        name: hostname
+        schema:
+          type: string
+        description: A unique value identifying this firewall object.
+        required: true
+      tags:
+      - firewalls
+      security:
+      - jwtAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FirewallObject'
           description: ''
   /api/rules/:
     get:
@@ -57,13 +99,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Rule'
+              $ref: '#/components/schemas/RuleRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/Rule'
+              $ref: '#/components/schemas/RuleRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/Rule'
+              $ref: '#/components/schemas/RuleRequest'
         required: true
       security:
       - jwtAuth: []
@@ -131,13 +173,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Rule'
+              $ref: '#/components/schemas/RuleRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/Rule'
+              $ref: '#/components/schemas/RuleRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/Rule'
+              $ref: '#/components/schemas/RuleRequest'
         required: true
       security:
       - jwtAuth: []
@@ -164,13 +206,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchedRule'
+              $ref: '#/components/schemas/PatchedRuleRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PatchedRule'
+              $ref: '#/components/schemas/PatchedRuleRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PatchedRule'
+              $ref: '#/components/schemas/PatchedRuleRequest'
       security:
       - jwtAuth: []
       - tokenAuth: []
@@ -191,7 +233,7 @@ paths:
         content:
           '*/*':
             schema:
-              $ref: '#/components/schemas/Rule'
+              $ref: '#/components/schemas/RuleRequest'
         required: true
       security:
       - jwtAuth: []
@@ -230,13 +272,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RuleSetRequest'
+              $ref: '#/components/schemas/RuleSetRequestRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/RuleSetRequest'
+              $ref: '#/components/schemas/RuleSetRequestRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/RuleSetRequest'
+              $ref: '#/components/schemas/RuleSetRequestRequest'
         required: true
       security:
       - jwtAuth: []
@@ -327,13 +369,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TokenObtainPair'
+              $ref: '#/components/schemas/TokenObtainPairRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/TokenObtainPair'
+              $ref: '#/components/schemas/TokenObtainPairRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/TokenObtainPair'
+              $ref: '#/components/schemas/TokenObtainPairRequest'
         required: true
       responses:
         '200':
@@ -354,13 +396,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TokenRefresh'
+              $ref: '#/components/schemas/TokenRefreshRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/TokenRefresh'
+              $ref: '#/components/schemas/TokenRefreshRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/TokenRefresh'
+              $ref: '#/components/schemas/TokenRefreshRequest'
         required: true
       responses:
         '200':
@@ -381,20 +423,34 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TokenVerify'
+              $ref: '#/components/schemas/TokenVerifyRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/TokenVerify'
+              $ref: '#/components/schemas/TokenVerifyRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/TokenVerify'
+              $ref: '#/components/schemas/TokenVerifyRequest'
         required: true
+      responses:
+        '200':
+          description: No response body
+  /api/users/:
+    get:
+      operationId: users_list
+      tags:
+      - users
+      security:
+      - jwtAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
       responses:
         '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TokenVerify'
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserPublic'
           description: ''
 components:
   schemas:
@@ -409,18 +465,24 @@ components:
     AuthToken:
       type: object
       properties:
-        username:
-          type: string
-          writeOnly: true
-        password:
-          type: string
-          writeOnly: true
         token:
           type: string
           readOnly: true
       required:
-      - password
       - token
+    AuthTokenRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          writeOnly: true
+          minLength: 1
+        password:
+          type: string
+          writeOnly: true
+          minLength: 1
+      required:
+      - password
       - username
     FirewallObject:
       type: object
@@ -428,21 +490,51 @@ components:
         hostname:
           type: string
           maxLength: 50
+        vendor:
+          type: string
+          maxLength: 50
+        detail_url:
+          type: string
+          format: uri
+          readOnly: true
+        history:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+          readOnly: true
       required:
+      - detail_url
+      - history
       - hostname
-    PatchedRule:
+      - vendor
+    FirewallObjectShort:
       type: object
       properties:
-        pk:
-          type: integer
-          readOnly: true
-          title: ID
+        hostname:
+          type: string
+          maxLength: 50
+      required:
+      - hostname
+    FirewallObjectShortRequest:
+      type: object
+      properties:
+        hostname:
+          type: string
+          minLength: 1
+          maxLength: 50
+      required:
+      - hostname
+    PatchedRuleRequest:
+      type: object
+      properties:
         action:
           $ref: '#/components/schemas/ActionEnum'
         protocol:
           $ref: '#/components/schemas/ProtocolEnum'
         source_name:
           type: string
+          minLength: 1
           maxLength: 100
         source_ip_orig:
           type: string
@@ -456,6 +548,7 @@ components:
           nullable: true
         destination_name:
           type: string
+          minLength: 1
           maxLength: 100
         destination_ip_orig:
           type: string
@@ -469,6 +562,7 @@ components:
           nullable: true
         requester:
           type: string
+          minLength: 1
           maxLength: 70
         ticket:
           type: string
@@ -482,45 +576,11 @@ components:
         firewalls:
           type: array
           items:
-            $ref: '#/components/schemas/FirewallObject'
+            $ref: '#/components/schemas/FirewallObjectShortRequest'
         status:
-          $ref: '#/components/schemas/StatusEnum'
-        created_on:
-          type: string
-          format: date-time
-          readOnly: true
-        created_by:
-          allOf:
-          - $ref: '#/components/schemas/UserPublic'
-          readOnly: true
-        last_updated_on:
-          type: string
-          format: date-time
-          readOnly: true
-        last_updated_by:
-          allOf:
-          - $ref: '#/components/schemas/UserPublic'
-          readOnly: true
+          $ref: '#/components/schemas/RuleStatusEnum'
         is_deleted:
           type: boolean
-        detail_url:
-          type: string
-          format: uri
-          readOnly: true
-        edit_url:
-          type: string
-          format: uri
-          readOnly: true
-        delete_url:
-          type: string
-          format: uri
-          readOnly: true
-        history:
-          type: array
-          items:
-            type: object
-            additionalProperties: {}
-          readOnly: true
     ProtocolEnum:
       enum:
       - TCP
@@ -587,9 +647,9 @@ components:
         firewalls:
           type: array
           items:
-            $ref: '#/components/schemas/FirewallObject'
+            $ref: '#/components/schemas/FirewallObjectShort'
         status:
-          $ref: '#/components/schemas/StatusEnum'
+          $ref: '#/components/schemas/RuleStatusEnum'
         created_on:
           type: string
           format: date-time
@@ -627,6 +687,7 @@ components:
             additionalProperties: {}
           readOnly: true
       required:
+      - action
       - created_by
       - created_on
       - delete_url
@@ -641,15 +702,69 @@ components:
       - requester
       - source_name
       - status
-    RuleInline:
+    RuleRequest:
       type: object
       properties:
-        url:
+        action:
+          $ref: '#/components/schemas/ActionEnum'
+        protocol:
+          $ref: '#/components/schemas/ProtocolEnum'
+        source_name:
           type: string
-          format: uri
-          readOnly: true
+          minLength: 1
+          maxLength: 100
+        source_ip_orig:
+          type: string
+        source_ip_nat:
+          type: string
+        source_port:
+          type: integer
+          maximum: 4294967295
+          minimum: 0
+          format: int64
+          nullable: true
+        destination_name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        destination_ip_orig:
+          type: string
+        destination_ip_nat:
+          type: string
+        destination_port:
+          type: integer
+          maximum: 4294967295
+          minimum: 0
+          format: int64
+          nullable: true
+        requester:
+          type: string
+          minLength: 1
+          maxLength: 70
+        ticket:
+          type: string
+          maxLength: 20
+        rule_set_request:
+          type: integer
+          nullable: true
+        notes:
+          type: string
+          maxLength: 200
+        firewalls:
+          type: array
+          items:
+            $ref: '#/components/schemas/FirewallObjectShortRequest'
+        status:
+          $ref: '#/components/schemas/RuleStatusEnum'
+        is_deleted:
+          type: boolean
       required:
-      - url
+      - action
+      - destination_name
+      - protocol
+      - requester
+      - source_name
+      - status
     RuleSetRequest:
       type: object
       properties:
@@ -660,10 +775,11 @@ components:
         related_rules:
           type: array
           items:
-            $ref: '#/components/schemas/RuleInline'
+            $ref: '#/components/schemas/Rule'
           readOnly: true
         status:
-          type: string
+          allOf:
+          - $ref: '#/components/schemas/RuleSetStatusEnum'
           readOnly: true
         approver:
           $ref: '#/components/schemas/UserPublic'
@@ -714,7 +830,26 @@ components:
       - refuse_url
       - related_rules
       - status
-    StatusEnum:
+    RuleSetRequestRequest:
+      type: object
+      properties:
+        approver:
+          $ref: '#/components/schemas/UserPublicRequest'
+      required:
+      - approver
+    RuleSetStatusEnum:
+      enum:
+      - REQ
+      - REF
+      - APR
+      - CON
+      type: string
+      description: |-
+        * `REQ` - RuleSetRequest requested
+        * `REF` - RuleSetRequest refused
+        * `APR` - RuleSetRequest approved
+        * `CON` - All rules in this RuleSetRequest configured
+    RuleStatusEnum:
       enum:
       - REQ
       - REF
@@ -733,12 +868,6 @@ components:
     TokenObtainPair:
       type: object
       properties:
-        username:
-          type: string
-          writeOnly: true
-        password:
-          type: string
-          writeOnly: true
         access:
           type: string
           readOnly: true
@@ -747,8 +876,20 @@ components:
           readOnly: true
       required:
       - access
-      - password
       - refresh
+    TokenObtainPairRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          writeOnly: true
+          minLength: 1
+        password:
+          type: string
+          writeOnly: true
+          minLength: 1
+      required:
+      - password
       - username
     TokenRefresh:
       type: object
@@ -758,16 +899,24 @@ components:
           readOnly: true
         refresh:
           type: string
-          writeOnly: true
       required:
       - access
       - refresh
-    TokenVerify:
+    TokenRefreshRequest:
+      type: object
+      properties:
+        refresh:
+          type: string
+          minLength: 1
+      required:
+      - refresh
+    TokenVerifyRequest:
       type: object
       properties:
         token:
           type: string
           writeOnly: true
+          minLength: 1
       required:
       - token
     UserPublic:
@@ -777,6 +926,17 @@ components:
           type: integer
         username:
           type: string
+      required:
+      - id
+      - username
+    UserPublicRequest:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+          minLength: 1
       required:
       - id
       - username
