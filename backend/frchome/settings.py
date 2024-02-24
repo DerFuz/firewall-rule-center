@@ -133,10 +133,10 @@ AUTH_LDAP_CACHE_TIMEOUT = 3600
 
 # Keep ModelBackend around for per-user permissions and maybe a local
 # superuser.
-AUTHENTICATION_BACKENDS = (
+AUTHENTICATION_BACKENDS = [
     'django_auth_ldap.backend.LDAPBackend',
     'django.contrib.auth.backends.ModelBackend',
-)
+]
 
 ROOT_URLCONF = 'frchome.urls'
 
