@@ -19,15 +19,6 @@ RUN apt-get update && apt-get install -y \
     libsasl2-dev slapd ldap-utils tox lcov valgrind && \
     pip wheel --wheel-dir=${SRC_DIR}/wheels python-ldap
 
-# Stage to build mysqlclient
-FROM ldap-build AS mysqlclient-build
-
-# dependencies for python-ldap
-RUN apt-get update && apt-get install -y \
-    default-libmysqlclient-dev && \
-    pip wheel --wheel-dir=${SRC_DIR}/wheels mysqlclient
-
-
 FROM python:3.11-slim-bookworm
 
 ENV PIP_DISABLE_PIP_VERSION_CHECK 1
@@ -45,13 +36,13 @@ RUN addgroup --system app && adduser --system --group app
 
 WORKDIR ${APP_HOME}
 
-# install runtime libraries for python-ldap and mysqlclient (no prod libraries?)
-RUN apt-get update && apt-get install -y libldap-2.5-0 default-libmysqlclient-dev
+# install runtime libraries for python-ldap
+RUN apt-get update && apt-get install -y libldap-2.5-0
 
 # install netcat for entry point
 RUN apt-get update && apt-get install -y netcat-traditional
 
-COPY --from=mysqlclient-build ${SRC_DIR}/wheels /wheels
+COPY --from=ldap-build ${SRC_DIR}/wheels /wheels
 RUN pip install --upgrade pip
 RUN pip install --no-cache /wheels/*
 
