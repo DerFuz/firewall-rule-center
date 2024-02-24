@@ -7,5 +7,6 @@ requests
 django-cors-headers
 django-simple-history
 django-auth-ldap
-mysqlclient
+#mysqlclient
+PyMySQL[rsa]
 drf-spectacular
