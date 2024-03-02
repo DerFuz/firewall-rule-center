@@ -1,11 +1,13 @@
 @startuml
+
 left to right direction
 
 skinparam actorStyle awesome
+skinparam ranksep 150
 
-actor "NW-Admin" as nwadmin
-actor "Normal-User" as user
-actor "Auditor" as auditor
+actor "NW-Admin" as nwadmin #indianred
+actor "Normal-User" as user #palegreen
+actor "Auditor" as auditor #lightblue
 
 package Auth {
   usecase "View Permission" as view_permission
@@ -41,41 +43,41 @@ package RuleSetRequest {
   usecase "View RuleSetRequest" as view_rulesetrequest
 }
 
-nwadmin --> view_permission
-nwadmin --> view_group
-nwadmin --> view_user
-nwadmin --> view_historicalfirewallobject
-nwadmin --> view_historicalrule
-nwadmin --> view_historicalrule_firewalls
-nwadmin --> view_historicalrulesetrequest
-nwadmin --> add_firewallobject
-nwadmin --> change_firewallobject
-nwadmin --> delete_firewallobject
-nwadmin --> view_firewallobject
-nwadmin --> add_rule
-nwadmin --> change_rule
-nwadmin --> delete_rule
-nwadmin --> view_rule
-nwadmin --> add_rulesetrequest
-nwadmin --> change_rulesetrequest
-nwadmin --> delete_rulesetrequest
-nwadmin --> view_rulesetrequest
+nwadmin -u[#red,bold]-> view_permission
+nwadmin -u[#red,bold]-> view_group
+nwadmin -u[#red,bold]-> view_user
+nwadmin -u[#red,bold]-> view_historicalfirewallobject
+nwadmin -u[#red,bold]-> view_historicalrule
+nwadmin -u[#red,bold]-> view_historicalrule_firewalls
+nwadmin -u[#red,bold]-> view_historicalrulesetrequest
+nwadmin -u[#red,bold]-> add_firewallobject
+nwadmin -u[#red,bold]-> change_firewallobject
+nwadmin -u[#red,bold]-> delete_firewallobject
+nwadmin -u[#red,bold]-> view_firewallobject
+nwadmin -u[#red,bold]-> add_rule
+nwadmin -u[#red,bold]-> change_rule
+nwadmin -u[#red,bold]-> delete_rule
+nwadmin -u[#red,bold]-> view_rule
+nwadmin -u[#red,bold]-> add_rulesetrequest
+nwadmin -u[#red,bold]-> change_rulesetrequest
+nwadmin -u[#red,bold]-> delete_rulesetrequest
+nwadmin -u[#red,bold]-> view_rulesetrequest
 
-auditor --> view_firewallobject
-auditor --> view_historicalrule
-auditor --> view_historicalrule_firewalls
-auditor --> view_rule
-auditor --> view_historicalrulesetrequest
-auditor --> view_rulesetrequest
+auditor -[#blue,bold]-> view_user
+auditor -[#blue,bold]-> view_firewallobject
+auditor -[#blue,bold]-> view_historicalrule
+auditor -[#blue,bold]-> view_historicalrule_firewalls
+auditor -[#blue,bold]-> view_rule
+auditor -[#blue,bold]-> view_historicalrulesetrequest
+auditor -[#blue,bold]-> view_rulesetrequest
 
-user --> view_firewallobject
-user --> view_historicalrule
-user --> view_historicalrule_firewalls
-user --> add_rule
-user --> view_rule
-user --> view_historicalrulesetrequest
-user --> add_rulesetrequest
-user --> view_rulesetrequest
-
-
+user -[#green,bold]-> view_user
+user -[#green,bold]-> view_firewallobject
+user -[#green,bold]-> view_historicalrule
+user -[#green,bold]-> view_historicalrule_firewalls
+user -[#green,bold]-> add_rule
+user -[#green,bold]-> view_rule
+user -[#green,bold]-> view_historicalrulesetrequest
+user -[#green,bold]-> add_rulesetrequest
+user -[#green,bold]-> view_rulesetrequest
 @enduml
