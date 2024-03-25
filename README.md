@@ -1,3 +1,5 @@
+![FRC logo](docs/Logo.png)
+
 # Firewall Rule Center
 
 This project is a prototype of a REST API Backend for documenting simple Layer-3/Layer-4 network firewall rules. It should help administrators to keep the desired state of these rules in one place and provide this information as a single-source-of-truth. It was written by *Jakob Wölfl* as part of his bachelors' thesis.
