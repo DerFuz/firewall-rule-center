@@ -1,0 +1,38 @@
+version: '3'
+
+volumes:
+  static_volume:
+
+networks:
+  backend:
+    driver: bridge
+
+services:
+  backend-app:
+    networks:
+      - backend
+    expose:
+      - 8080
+    volumes:
+      # - type: bind
+      #   source: ./lldap/crypto/root-ca.crt
+      #   target: /root-ca.crt
+      - static_volume:/home/app/web/staticfiles
+    env_file:
+      - ./backend/.env
+    build:
+      context: .
+      dockerfile: ./Dockerfile.prod
+    command: gunicorn frchome.wsgi:application --bind 0.0.0.0:8080
+
+  backend-web:
+    networks:
+      - backend
+    ports:
+      - '8000:8000'
+    volumes:
+      - static_volume:/home/app/web/staticfiles
+    depends_on:
+      - backend-app
+    build:
+      context: ./nginx
